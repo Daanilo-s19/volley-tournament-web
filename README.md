@@ -8,8 +8,9 @@
 Gerenciamos as tarefas da sprint pelo Trello (disponível no Teams)
 
 ## Mapa de Riscos
+[Segue o link](https://docs.google.com/spreadsheets/d/12AtwU42mCv-Zhn3DxAsj2n50CY1WRFCGr2agjgdnluU/edit?usp=sharing) dos mapas de riscos do projeto.
 
-Em construçao
+Obs: A medida que os riscos vão sendo identificados, eles vão serão adicionados a planilha.
 
 ## Arquitetura 
 
