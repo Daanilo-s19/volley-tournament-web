@@ -16,3 +16,15 @@ Obs: A medida que os riscos vão sendo identificados, eles vão serão adicionad
 
 ![render HTML](/docs/html-next.png "renderizando o HTML no Next.js")
 ![SERVER SIDE RENDER NEXT.JS](/docs/ssr.png "SSR")
+
+
+## corrigir os mapas de riscos e contigência
+## passar tudo pro github
+
+## adicionar requisitos funcionais e não funcionais
+
+## Se reunir e definir as histórias
+histórias de usuários nao finalziadas
+estimativas
+riscos e estimativas
+e melhorias no DOD
