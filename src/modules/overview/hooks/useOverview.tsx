@@ -1,10 +1,12 @@
 import { useDisclosure } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import useAppState from "../../../hooks/useAppState";
 import OverViewService from "../services/overviewService";
 import { TeamOutput } from "../types";
 
 export default function useOverview() {
+  const [user, _] = useAppState().userState;
   const {
     isOpen: isOpenCreateTeam,
     onOpen: onOpenCreateTeam,
@@ -88,5 +90,6 @@ export default function useOverview() {
 
     state,
     teams,
+    user,
   };
 }

@@ -40,6 +40,8 @@ export function OverviewPage() {
     errors,
     teams,
     state,
+
+    user,
   } = useOverview();
 
   const renderCreateClubModal = () => {
@@ -131,6 +133,9 @@ export function OverviewPage() {
 
   return (
     <Box>
+      <Heading as="h3" size="lg" margin="48px 0 0">
+        {user?.token && `Bem vindo, ${user.token}`}
+      </Heading>
       <Heading as="h3" size="lg" margin="48px 0 0">
         Gerenciamento dos clubes
       </Heading>
