@@ -15,12 +15,13 @@ import {
   Text,
   IconButton,
 } from "@chakra-ui/react";
+import { TeamOutput } from "../types";
 interface Props {
-  items: Array<any>;
+  items: Array<TeamOutput>;
   loading: boolean;
   error: boolean;
-  onEdit(item: any): void;
-  onDelete(item: any): void;
+  onEdit(item: TeamOutput): void;
+  onDelete(item: TeamOutput): void;
 }
 export default function GenericTable({
   items,
@@ -31,8 +32,9 @@ export default function GenericTable({
 }: Props) {
   const getHead = () =>
     [
-      "Equipe",
+      "Brasao",
       "nome",
+
       "atletas",
       "comissão técnica",
       "Comissão médica",
@@ -40,7 +42,21 @@ export default function GenericTable({
       "",
       "",
     ].map((e, key) => <Th key={key}>{e}</Th>);
-
+  // const mockItem: TeamOutput = {
+  //   id: "id mockado",
+  //   nome: "nome mockado",
+  //   equipe: "equipe mockado",
+  //   urlBrasao: "url mockado",
+  //   apta: false,
+  //   descricaoAptidao: undefined,
+  //   dataAtualizacao: "data mockado",
+  //   dataCriacao: "data mockado",
+  //   cidade: "cidade mockado",
+  //   estado: "estado mockado",
+  //   idLiga: "",
+  //   idGinasio: "",
+  //   quantidadeAtletas: 0,
+  // };
   const getBody = () =>
     items.map((e, key) => (
       <Tr key={key}>
@@ -50,7 +66,10 @@ export default function GenericTable({
           </AspectRatio>
         </Td>
         <Td>
-          <Link href="">{e.nome}</Link>
+          <Link href="">{e?.nome ?? "-"}</Link>
+        </Td>
+        <Td>
+          <Link href="">{"-"}</Link>
         </Td>
         <Td>
           <Link href="">-</Link>
@@ -59,16 +78,13 @@ export default function GenericTable({
           <Link href="">-</Link>
         </Td>
         <Td>
-          <Link href="">-</Link>
-        </Td>
-        <Td>
-          <Link href="">-</Link>
+          <Text>{e?.quantidadeAtletas ?? ""}</Text>
         </Td>
         <Td>
           <IconButton
             aria-label="Editar"
             icon={<EditIcon />}
-            onClick={onEdit}
+            onClick={() => onEdit(e)}
             isRound
           />
         </Td>
@@ -92,7 +108,7 @@ export default function GenericTable({
         <Tbody>
           {(loading || error) && (
             <Tr>
-              <Td colSpan={6}>
+              <Td colSpan={10}>
                 <Center>
                   {loading && (
                     <Spinner

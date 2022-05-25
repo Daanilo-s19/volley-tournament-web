@@ -1,16 +1,18 @@
 import axios from "axios";
 import useAppState from "../hooks/useAppState";
 
-export default function ApiService() {
-  const [user, _] = useAppState().userState;
+function initClient() {
+  // const [user, _] = useAppState().userState;
 
-  const token = user?.token ?? "";
+  // const token = user?.token ?? "";
+  return axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 
-  const api = axios.create({
-    baseURL: process.env.URL,
-    timeout: 1000,
-    headers: { "Bearer Token": token },
+    headers: {
+      "Content-Type": "text/plain",
+      // "Bearer Token": token
+    },
   });
-
-  return { api };
 }
+
+export const ApiService = initClient();
