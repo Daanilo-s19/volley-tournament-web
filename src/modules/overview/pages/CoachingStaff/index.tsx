@@ -17,21 +17,23 @@ import {
   ModalOverlay,
   Text,
   Tooltip,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { Coach } from "../../../../entities/person/coach";
 import { api } from "../../../../libs/axios";
 import parseResponseData from "../../../../utils/parsers";
 import { isValidCPF } from "@brazilian-utils/brazilian-utils";
 import { CoachTable } from "./table";
+import dayjs from "dayjs";
 
 type ModalType = "create" | "edit";
 
 interface CreateCoachForm {
-  name: string;
+  nome: string;
   documento: string;
   genero: string;
   dataNascimento: string;
@@ -48,12 +50,56 @@ export default function CoachingStaff() {
     reset,
     formState: { errors },
   } = useForm<CreateCoachForm>();
+  const toast = useToast();
 
   const {
     query: { idEquipe },
   } = useRouter();
 
-  function onSubmitTeam() {}
+  const { mutate: createCoachMutation, isLoading: isLoadingCreateCoach } =
+    useMutation(
+      (newCoach: CreateCoachForm) =>
+        api.post("/pessoa/tecnico", {
+          idEquipe: idEquipe,
+          ...newCoach,
+        }),
+      {
+        onSuccess: () => {
+          toast({
+            title: "Sucesso.",
+            description: "Técnico criado com sucesso.",
+            status: "success",
+            duration: 9000,
+            position: "bottom-right",
+            isClosable: true,
+          });
+          reset();
+          setModalStatus(undefined);
+        },
+        onError: () => {
+          toast({
+            title: "Ops.",
+            description: "Houve algum erro ao cadastrar um técnico. ",
+            status: "error",
+            position: "bottom-right",
+            duration: 9000,
+            isClosable: true,
+          });
+        },
+      }
+    );
+
+  function createCoach({ dataNascimento, genero, ...rest }: CreateCoachForm) {
+    createCoachMutation({
+      dataNascimento: dayjs(dataNascimento).toISOString(),
+      genero: genero.toLowerCase(),
+      ...rest,
+    });
+  }
+
+  function editCoach(updatedCoach: CreateCoachForm) {
+    console.log(updatedCoach);
+  }
 
   function closeCreateCoachingStaff() {
     setModalStatus(undefined);
@@ -92,12 +138,16 @@ export default function CoachingStaff() {
             {modalStatus === "create" ? "Adicionar Técnico" : "Editar Técnico"}
           </ModalHeader>
 
-          <form onSubmit={handleSubmit(onSubmitTeam)}>
+          <form
+            onSubmit={handleSubmit(
+              modalStatus === "create" ? createCoach : editCoach
+            )}
+          >
             <ModalBody pb={6}>
               <FormControl>
                 <FormLabel>Nome</FormLabel>
-                <Input {...register("name", { required: true })} />
-                {errors.name && (
+                <Input {...register("nome", { required: true })} />
+                {errors.nome && (
                   <Text color="red" fontSize="10">
                     Insira o nome do técnico
                   </Text>
@@ -138,11 +188,16 @@ export default function CoachingStaff() {
                 <Input
                   {...register("documentoCbv", {
                     required: true,
+                    minLength: 11,
+                    maxLength: 11,
                   })}
                 />
                 {errors.documentoCbv && (
                   <Text color="red" fontSize="10">
-                    Insira um documento CBV
+                    {errors.documentoCbv.type === "minLength" ||
+                    errors.documentoCbv.type === "maxLength"
+                      ? "Insira um documento CBV válido"
+                      : "Insira um documento CBV"}
                   </Text>
                 )}
               </FormControl>
@@ -151,11 +206,16 @@ export default function CoachingStaff() {
                 <Input
                   {...register("documentoCref", {
                     required: true,
+                    maxLength: 11,
+                    minLength: 11,
                   })}
                 />
                 {errors.documentoCref && (
                   <Text color="red" fontSize="10">
-                    Insira um documento CREF
+                    {errors.documentoCref.type === "minLength" ||
+                    errors.documentoCref.type === "maxLength"
+                      ? "Insira um documento CREF válido"
+                      : "Insira um documento CREF"}
                   </Text>
                 )}
               </FormControl>
@@ -163,32 +223,43 @@ export default function CoachingStaff() {
                 <FormControl>
                   <FormLabel>Data de nascimento</FormLabel>
                   <Input
+                    type="date"
                     {...register("dataNascimento", {
                       required: true,
+                      validate: (date) => {
+                        return dayjs(date).diff(dayjs(), "y") <= -15;
+                      },
                     })}
                   />
-                  {errors.documentoCref && (
+                  {errors.dataNascimento && (
                     <Text color="red" fontSize="10">
-                      Insira um documento CREF
+                      {errors.dataNascimento.type === "validate"
+                        ? "O técnico não pode possuir idade inferior a 15 anos"
+                        : "Insira uma data de nascimento"}
                     </Text>
                   )}
                 </FormControl>
               )}
             </ModalBody>
+            <ModalFooter>
+              <Button
+                onClick={() => {
+                  setModalStatus(undefined);
+                }}
+                mr={3}
+              >
+                Fechar
+              </Button>
+              <Button
+                colorScheme="blue"
+                type="submit"
+                isLoading={isLoadingCreateCoach}
+              >
+                {modalStatus === "create" ? "Criar" : "Editar"}
+              </Button>
+            </ModalFooter>
           </form>
-          <ModalFooter>
-            <Button
-              onClick={() => {
-                setModalStatus(undefined);
-              }}
-              mr={3}
-            >
-              Fechar
-            </Button>
-            <Button colorScheme="blue" type="submit">
-              {modalStatus === "create" ? "Criar" : "Editar"}
-            </Button>
-          </ModalFooter>
+
           <ModalCloseButton />
         </ModalContent>
       </Modal>
