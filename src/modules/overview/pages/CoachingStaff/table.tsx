@@ -18,7 +18,7 @@ interface CoachingTableProps {
   error: unknown;
 }
 
-function CoachingTable({ loading, coaches, error }: CoachingTableProps) {
+function CoachTable({ loading, coaches, error }: CoachingTableProps) {
   return (
     <TableContainer>
       <Table variant="simple">
@@ -52,7 +52,7 @@ function CoachingTable({ loading, coaches, error }: CoachingTableProps) {
                       novamente mais tarde
                     </Text>
                   )}
-                  {Boolean(coaches.length === 0 && !error) && (
+                  {Boolean(coaches.length === 0 && !error && !loading) && (
                     <Text>Ainda não há clubes nessa Liga</Text>
                   )}
                 </Center>
@@ -75,4 +75,4 @@ function CoachingTable({ loading, coaches, error }: CoachingTableProps) {
   );
 }
 
-export { CoachingTable };
+export { CoachTable };
