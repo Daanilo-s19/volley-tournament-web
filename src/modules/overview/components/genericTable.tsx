@@ -33,15 +33,14 @@ export default function GenericTable({
   const getHead = () =>
     [
       "Brasao",
-      "nome",
-
-      "atletas",
-      "comissão técnica",
+      "Nome",
+      "Atletas",
+      "Comissão técnica",
       "Comissão médica",
-      "total",
+      "Total",
       "",
       "",
-    ].map((e, key) => <Th key={key}>{e}</Th>);
+    ].map((e) => <Th key={e}>{e}</Th>);
 
   const getBody = () => {
     if (items.length === 0 && !error)
@@ -53,8 +52,8 @@ export default function GenericTable({
         </Td>
       );
 
-    return items.map((e, key) => (
-      <Tr key={key}>
+    return items.map((e) => (
+      <Tr key={e.id}>
         <Td>
           <AspectRatio maxW="40px" ratio={4 / 3}>
             <Image src={e.urlBrasao} alt="brasao" objectFit="cover" />
@@ -70,7 +69,7 @@ export default function GenericTable({
           <Link href="">-</Link>
         </Td>
         <Td>
-          <Link href="">-</Link>
+          <Link href={`/visao-geral/comissao-tecnica/${e.id}`}>-</Link>
         </Td>
         <Td>
           <Text>{e?.quantidadeAtletas ?? ""}</Text>
