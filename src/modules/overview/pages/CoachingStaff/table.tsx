@@ -13,9 +13,9 @@ import {
 import { Coach } from "../../../../entities/person/coach";
 
 interface CoachingTableProps {
-  loading: boolean;
+  loading?: boolean;
   coaches: Coach[];
-  error: unknown;
+  error?: unknown;
 }
 
 function CoachTable({ loading, coaches, error }: CoachingTableProps) {
@@ -48,12 +48,13 @@ function CoachTable({ loading, coaches, error }: CoachingTableProps) {
                   )}
                   {Boolean(error) && (
                     <Text>
-                      Não foi possivel exibir os treinadores no momento. tente
-                      novamente mais tarde
+                      Ainda não é possivel visualizar a lista de técnicos
                     </Text>
                   )}
                   {Boolean(coaches.length === 0 && !error && !loading) && (
-                    <Text>Ainda não há clubes nessa Liga</Text>
+                    <Text>
+                      Ainda não é possivel visualizar a lista de técnicos
+                    </Text>
                   )}
                 </Center>
               </Td>

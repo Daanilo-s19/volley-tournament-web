@@ -53,22 +53,6 @@ export default function CoachingStaff() {
     query: { idEquipe },
   } = useRouter();
 
-  const { data: liga } = useQuery(
-    "ligas",
-    () => {
-      return api.get("/liga");
-    },
-    { onSuccess: (d) => console.log(d) }
-  );
-
-  const {
-    data: coaches,
-    isLoading: isLoadingCoaches,
-    isError,
-  } = useQuery<Coach[]>("tecnicos", () =>
-    api.get(`/pessoa/tecnico/${idEquipe}`).then(parseResponseData)
-  );
-
   function onSubmitTeam() {}
 
   function closeCreateCoachingStaff() {
@@ -98,11 +82,7 @@ export default function CoachingStaff() {
           />
         </Tooltip>
       </Flex>
-      <CoachTable
-        coaches={coaches ?? []}
-        loading={isLoadingCoaches}
-        error={isError}
-      />
+      <CoachTable coaches={[]} />
 
       <Modal isOpen={Boolean(modalStatus)} onClose={closeCreateCoachingStaff}>
         <ModalOverlay />
