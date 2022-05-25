@@ -26,7 +26,11 @@ export interface TeamOutput {
   descricaoAptidao: Object;
   dataAtualizacao: string;
   dataCriacao: string;
-  tecnico: Coach;
+  cidade: string;
+  estado: string;
+  idLiga: string;
+  idGinasio: string;
+  quantidadeAtletas: number;
 }
 
 export interface FetchTeamsOutput {
@@ -34,8 +38,12 @@ export interface FetchTeamsOutput {
 }
 
 export interface CreateTeamInput {
+  idLiga: string;
+  idGinasio: string;
   nome: string;
   urlBrasao: string;
+  cidade: string;
+  estado: string;
 }
 
 export interface CreateCoachVariables {
@@ -46,4 +54,43 @@ export interface CreateCoachVariables {
   genero: genrerType;
   idade: number;
   documentoCbv: string;
+}
+
+export interface CreateLeagueOutput {
+  id: string;
+  genero: string;
+  iniciadaEm: string;
+  nome: string;
+  serie: string;
+}
+
+export interface LeagueOutput {
+  id: string;
+  genero: string;
+  iniciadaEm: string;
+  nome: string;
+  serie: string;
+}
+
+export interface CreateStadiumInput {
+  nome: string;
+  cidade: string;
+  estado: string;
+}
+export interface CreateStadiumOutput {
+  nome: string;
+  cidade: string;
+  estado: string;
+  id: string;
+  dataAtualizacao: string;
+  dataCriacao: string;
+}
+
+export interface FormType {
+  nome: any;
+  nameTeam: string;
+  urlLogo: string;
+  nameStadium: string;
+  city: string;
+  state: string;
 }
