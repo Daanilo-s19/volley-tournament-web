@@ -41,7 +41,7 @@ export default function GenericTable({
       "Total",
       "",
       "",
-    ].map((e, key) => <Th key={key}>{e}</Th>);
+    ].map((e, key) => <Th key={e}>{e}</Th>);
 
   const getBody = () => {
     if (items.length === 0 && !error)
@@ -54,7 +54,7 @@ export default function GenericTable({
       );
 
     return items.map((e, key) => (
-      <Tr key={key}>
+      <Tr key={e.id}>
         <Td>
           <AspectRatio maxW="40px" ratio={4 / 3}>
             <Image src={e.urlBrasao} alt="brasao" objectFit="cover" />
