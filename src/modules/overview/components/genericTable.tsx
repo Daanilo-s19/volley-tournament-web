@@ -66,10 +66,10 @@ export default function GenericTable({
           <Link href="">{"-"}</Link>
         </Td>
         <Td>
-          <Link href="">-</Link>
+          <Link href={`/visao-geral/comissao-tecnica/${e.id}`}>-</Link>
         </Td>
         <Td>
-          <Link href={`/visao-geral/comissao-tecnica/${e.id}`}>-</Link>
+          <Link href={`/visao-geral/comissao-medica/${e.id}`}>-</Link>
         </Td>
         <Td>
           <Text>{e?.quantidadeAtletas ?? ""}</Text>
