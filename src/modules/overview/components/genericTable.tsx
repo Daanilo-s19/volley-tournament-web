@@ -33,12 +33,12 @@ export default function GenericTable({
   const getHead = () =>
     [
       "Brasao",
-      "nome",
+      "Nome",
 
-      "atletas",
-      "comissão técnica",
+      "Atletas",
+      "Comissão técnica",
       "Comissão médica",
-      "total",
+      "Total",
       "",
       "",
     ].map((e, key) => <Th key={key}>{e}</Th>);
