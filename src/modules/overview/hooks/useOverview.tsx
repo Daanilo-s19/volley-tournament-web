@@ -1,4 +1,4 @@
-import { useDisclosure } from "@chakra-ui/react";
+import { useDisclosure, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAppState from "../../../hooks/useAppState";
@@ -41,23 +41,50 @@ export default function useOverview() {
     reset,
     formState: { errors },
   } = useForm<FormType>();
+  const toast = useToast();
 
   useEffect(() => {
     onFetchLeague();
   }, []);
 
   useEffect(() => {
-    onFetchTeams(currentLeague?.id ?? "");
+    currentLeague?.id && onFetchTeams(currentLeague?.id);
   }, [currentLeague]);
+
+  const toastSuccess = () => {
+    setState({ error: false, loading: false });
+
+    toast({
+      title: "Sucesso.",
+      description: "Operação realizada com sucesso.",
+      status: "success",
+      duration: 9000,
+      position: "bottom-right",
+      isClosable: true,
+    });
+  };
+  const toastError = () => {
+    toast({
+      title: "Ops.",
+      description: "houve um equivoco.",
+      status: "error",
+      position: "bottom-right",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
 
   const onFetchTeams = async (id: string) => {
     try {
       setState({ error: false, loading: true });
       const result = await fetchTeams(id);
-      setTeams(result.teams);
-      setState({ ...state, loading: false });
+
+      setTeams(result);
+
+      setState({ error: false, loading: false });
     } catch (error) {
       setState({ loading: false, error: true });
+      toastError();
     }
   };
 
@@ -76,6 +103,9 @@ export default function useOverview() {
       estado: data.state,
     };
     try {
+      onCloseCreateTeam();
+      onCloseEditTeam();
+
       setState({ error: false, loading: true });
 
       if (isOpenCreateTeam) {
@@ -83,15 +113,16 @@ export default function useOverview() {
         await createTeam({ input: { ...input, idGinasio: result.id } });
       } else {
         await updateTeam(
-          { ...input, idGinasio: currentTeam.id },
+          { ...input, idGinasio: currentTeam.idGinasio },
           currentTeam.id
         );
       }
 
-      setState({ ...state, loading: false });
+      onFetchTeams(currentLeague?.id);
+
+      toastSuccess();
     } catch (error) {
-      console.error(error);
-      setState({ loading: false, error: true });
+      toastError();
     }
   };
 
@@ -100,6 +131,7 @@ export default function useOverview() {
       setState({ error: false, loading: true });
 
       await deleteTeam(id);
+      onFetchTeams(currentLeague?.id);
 
       setState({ ...state, loading: false });
     } catch (error) {
@@ -117,9 +149,10 @@ export default function useOverview() {
       const league = result?.[0];
       setCurrentLeague(league);
 
-      setState({ ...state, loading: false });
+      setState({ error: false, loading: false });
     } catch (error) {
       setState({ loading: false, error: true });
+      toastError();
     }
   };
   const initializeLeague = async (id: string) => {
@@ -127,9 +160,9 @@ export default function useOverview() {
       setState({ error: false, loading: true });
       await createLeague(id);
 
-      setState({ ...state, loading: false });
+      toastSuccess();
     } catch (error) {
-      console.log(error);
+      toastError();
     }
   };
 
@@ -139,9 +172,9 @@ export default function useOverview() {
       await deleteLeague(id);
       await onFetchLeague();
 
-      setState({ ...state, loading: false });
+      toastSuccess();
     } catch (error) {
-      setState({ loading: false, error: true });
+      toastError();
     }
   };
 

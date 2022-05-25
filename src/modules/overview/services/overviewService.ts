@@ -9,7 +9,7 @@ import {
 } from "../types";
 
 export default function OverViewService() {
-  const fetchTeams = async (id: string): Promise<FetchTeamsOutput> => {
+  const fetchTeams = async (id: string): Promise<TeamOutput[]> => {
     try {
       const response = await ApiService.get(`/equipe?idLiga=${id}`);
       return response.data;
@@ -24,7 +24,7 @@ export default function OverViewService() {
     input: CreateTeamInput;
   }): Promise<TeamOutput> => {
     try {
-      const response = await ApiService.post("/equipe", { input });
+      const response = await ApiService.post("/equipe", { ...input });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -47,7 +47,7 @@ export default function OverViewService() {
     id: string
   ): Promise<TeamOutput> => {
     try {
-      const response = await ApiService.put(`/equipe/${id}`, { input });
+      const response = await ApiService.put(`/equipe/${id}`, { ...input });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -71,7 +71,7 @@ export default function OverViewService() {
     input: CreateCoachVariables;
   }): Promise<CreateCoachVariables> => {
     try {
-      const response = await ApiService.post("/pessoa/tecnico", { input });
+      const response = await ApiService.post("/pessoa/tecnico", { ...input });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -93,9 +93,7 @@ export default function OverViewService() {
     stadium: CreateStadiumInput
   ): Promise<CreateStadiumOutput> => {
     try {
-      const response = await ApiService.post("/ginasio", {
-        ...stadium,
-      });
+      const response = await ApiService.post("/ginasio", stadium);
       return response.data;
     } catch (error) {
       console.error(error);

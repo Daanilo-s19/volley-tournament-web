@@ -85,6 +85,7 @@ export function OverviewPage() {
                 <FormLabel>url do brasao</FormLabel>
                 <Input
                   placeholder="url do brasao"
+                  defaultValue={currentTeam?.urlBrasao}
                   {...register("urlLogo", { required: true })}
                 />
                 {errors.urlLogo && (
@@ -93,49 +94,60 @@ export function OverviewPage() {
                   </Text>
                 )}
               </FormControl>
-              <Heading as="h4" size="md" margin="48px 0 12px">
-                Informações do ginásio
-              </Heading>
-              <FormControl mt={4}>
-                <FormLabel>Nome do Ginásio</FormLabel>
-                <Input
-                  placeholder="nome do ginásio"
-                  {...register("nameStadium", { required: true })}
-                />
-                {errors.nameStadium && (
-                  <Text color="red" fontSize="10">
-                    Insira o nome do Ginásio
-                  </Text>
-                )}
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Estado</FormLabel>
-                <Input
-                  placeholder="estado"
-                  {...register("state", { required: true })}
-                />
-                {errors.state && (
-                  <Text color="red" fontSize="10">
-                    Insira o estado
-                  </Text>
-                )}
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Cidade</FormLabel>
-                <Input
-                  placeholder="Cidade"
-                  {...register("city", { required: true })}
-                />
-                {errors.city && (
-                  <Text color="red" fontSize="10">
-                    Insira a cidade
-                  </Text>
-                )}
-              </FormControl>
+
+              {isOpenCreateTeam && (
+                <>
+                  <Heading as="h4" size="md" margin="48px 0 12px">
+                    Informações do ginásio
+                  </Heading>
+                  <FormControl mt={4}>
+                    <FormLabel>Nome do Ginásio</FormLabel>
+                    <Input
+                      placeholder="nome do ginásio"
+                      {...register("nameStadium", { required: true })}
+                    />
+                    {errors.nameStadium && (
+                      <Text color="red" fontSize="10">
+                        Insira o nome do Ginásio
+                      </Text>
+                    )}
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>Estado</FormLabel>
+                    <Input
+                      placeholder="estado"
+                      max={2}
+                      {...register("state", {
+                        maxLength: {
+                          value: 2,
+                          message: "Digita apenas o acrônimo da cidade",
+                        },
+                      })}
+                    />
+                    {errors.state && (
+                      <Text color="red" fontSize="10">
+                        Insira o estado
+                      </Text>
+                    )}
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>Cidade</FormLabel>
+                    <Input
+                      placeholder="Cidade"
+                      {...register("city", { required: true })}
+                    />
+                    {errors.city && (
+                      <Text color="red" fontSize="10">
+                        Insira a cidade
+                      </Text>
+                    )}
+                  </FormControl>
+                </>
+              )}
             </ModalBody>{" "}
             <ModalFooter>
               <Button colorScheme="blue" type="submit" mr={3}>
-                Criar clube
+                {isOpenCreateTeam ? "Criar clube" : "Editar clube"}
               </Button>
               <Button
                 onClick={() => {
@@ -191,7 +203,7 @@ export function OverviewPage() {
         <Text>
           <b>iniciada em: </b> {currentLeague?.iniciadaEm}
         </Text>
-        <Box>
+        {/* <Box>
           <IconButton
             colorScheme="blue"
             aria-label="Iniciar Liga"
@@ -212,7 +224,7 @@ export function OverviewPage() {
             }}
             isRound
           />
-        </Box>
+        </Box> */}
       </Box>
       <Divider margin={"24px 0"} />
       <Heading as="h3" size="lg" margin="48px 0 12px">

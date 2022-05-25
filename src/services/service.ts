@@ -9,7 +9,8 @@ function initClient() {
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 
     headers: {
-      "Content-Type": "text/plain",
+      accept: "application/json",
+      "Content-Type": "application/json",
       // "Bearer Token": token
     },
   });

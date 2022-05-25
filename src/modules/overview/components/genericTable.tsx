@@ -42,23 +42,18 @@ export default function GenericTable({
       "",
       "",
     ].map((e, key) => <Th key={key}>{e}</Th>);
-  // const mockItem: TeamOutput = {
-  //   id: "id mockado",
-  //   nome: "nome mockado",
-  //   equipe: "equipe mockado",
-  //   urlBrasao: "url mockado",
-  //   apta: false,
-  //   descricaoAptidao: undefined,
-  //   dataAtualizacao: "data mockado",
-  //   dataCriacao: "data mockado",
-  //   cidade: "cidade mockado",
-  //   estado: "estado mockado",
-  //   idLiga: "",
-  //   idGinasio: "",
-  //   quantidadeAtletas: 0,
-  // };
-  const getBody = () =>
-    items.map((e, key) => (
+
+  const getBody = () => {
+    if (items.length === 0 && !error)
+      return (
+        <Td colSpan={10}>
+          <Center>
+            <Text>Ainda não há clubes nessa Liga</Text>
+          </Center>
+        </Td>
+      );
+
+    return items.map((e, key) => (
       <Tr key={key}>
         <Td>
           <AspectRatio maxW="40px" ratio={4 / 3}>
@@ -98,7 +93,7 @@ export default function GenericTable({
         </Td>
       </Tr>
     ));
-
+  };
   return (
     <TableContainer>
       <Table variant="simple">
