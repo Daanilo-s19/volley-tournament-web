@@ -26,6 +26,7 @@ import { Coach } from "../../../../entities/person/coach";
 import { api } from "../../../../libs/axios";
 import parseResponseData from "../../../../utils/parsers";
 import { isValidCPF } from "@brazilian-utils/brazilian-utils";
+import { CoachTable } from "./table";
 
 type ModalType = "create" | "edit";
 
@@ -60,7 +61,11 @@ export default function CoachingStaff() {
     { onSuccess: (d) => console.log(d) }
   );
 
-  const { data: coach } = useQuery<Coach>("tecnico", () =>
+  const {
+    data: coaches,
+    isLoading: isLoadingCoaches,
+    isError,
+  } = useQuery<Coach[]>("tecnicos", () =>
     api.get(`/pessoa/tecnico/${idEquipe}`).then(parseResponseData)
   );
 
@@ -93,6 +98,11 @@ export default function CoachingStaff() {
           />
         </Tooltip>
       </Flex>
+      <CoachTable
+        coaches={coaches ?? []}
+        loading={isLoadingCoaches}
+        error={isError}
+      />
 
       <Modal isOpen={Boolean(modalStatus)} onClose={closeCreateCoachingStaff}>
         <ModalOverlay />
@@ -106,10 +116,7 @@ export default function CoachingStaff() {
             <ModalBody pb={6}>
               <FormControl>
                 <FormLabel>Nome</FormLabel>
-                <Input
-                  defaultValue={coach?.nome}
-                  {...register("name", { required: true })}
-                />
+                <Input {...register("name", { required: true })} />
                 {errors.name && (
                   <Text color="red" fontSize="10">
                     Insira o nome do técnico
@@ -119,7 +126,6 @@ export default function CoachingStaff() {
               <FormControl>
                 <FormLabel>Gênero</FormLabel>
                 <Input
-                  defaultValue={coach?.genero}
                   {...register("genero", {
                     required: true,
                     validate: (genero) =>
@@ -136,7 +142,6 @@ export default function CoachingStaff() {
               <FormControl>
                 <FormLabel>CPF</FormLabel>
                 <Input
-                  defaultValue={coach?.documento}
                   {...register("documento", {
                     required: true,
                     validate: isValidCPF,
@@ -151,7 +156,6 @@ export default function CoachingStaff() {
               <FormControl>
                 <FormLabel>Documento CBV</FormLabel>
                 <Input
-                  defaultValue={coach?.documentoCbv}
                   {...register("documentoCbv", {
                     required: true,
                   })}
@@ -165,7 +169,6 @@ export default function CoachingStaff() {
               <FormControl>
                 <FormLabel>Documento CREF</FormLabel>
                 <Input
-                  defaultValue={coach?.documentoCref}
                   {...register("documentoCref", {
                     required: true,
                   })}
