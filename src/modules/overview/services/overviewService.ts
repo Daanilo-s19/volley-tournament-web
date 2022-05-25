@@ -1,4 +1,4 @@
-import ApiService from "../../../services/service";
+import { api } from "../../../libs/axios";
 import {
   CreateCoachVariables,
   CreateTeamInput,
@@ -7,8 +7,6 @@ import {
 } from "../types";
 
 export default function OverViewService() {
-  const { api } = ApiService();
-
   const fetchTeams = async (): Promise<FetchTeamsOutput> => {
     try {
       const response = await api.get("/equipe");
@@ -66,6 +64,7 @@ export default function OverViewService() {
       throw error;
     }
   };
+
   const createCoach = async ({
     input,
   }: {
