@@ -15,12 +15,13 @@ import {
   Text,
   IconButton,
 } from "@chakra-ui/react";
+import { TeamOutput } from "../types";
 interface Props {
-  items: Array<any>;
+  items: Array<TeamOutput>;
   loading: boolean;
   error: boolean;
-  onEdit(item: any): void;
-  onDelete(item: any): void;
+  onEdit(item: TeamOutput): void;
+  onDelete(item: TeamOutput): void;
 }
 export default function GenericTable({
   items,
@@ -31,8 +32,9 @@ export default function GenericTable({
 }: Props) {
   const getHead = () =>
     [
-      "Equipe",
+      "Brasao",
       "nome",
+
       "atletas",
       "comissão técnica",
       "Comissão médica",
@@ -41,8 +43,17 @@ export default function GenericTable({
       "",
     ].map((e, key) => <Th key={key}>{e}</Th>);
 
-  const getBody = () =>
-    items.map((e, key) => (
+  const getBody = () => {
+    if (items.length === 0 && !error)
+      return (
+        <Td colSpan={10}>
+          <Center>
+            <Text>Ainda não há clubes nessa Liga</Text>
+          </Center>
+        </Td>
+      );
+
+    return items.map((e, key) => (
       <Tr key={key}>
         <Td>
           <AspectRatio maxW="40px" ratio={4 / 3}>
@@ -50,7 +61,10 @@ export default function GenericTable({
           </AspectRatio>
         </Td>
         <Td>
-          <Link href="">{e.nome}</Link>
+          <Link href="">{e?.nome ?? "-"}</Link>
+        </Td>
+        <Td>
+          <Link href="">{"-"}</Link>
         </Td>
         <Td>
           <Link href="">-</Link>
@@ -59,16 +73,13 @@ export default function GenericTable({
           <Link href="">-</Link>
         </Td>
         <Td>
-          <Link href="">-</Link>
-        </Td>
-        <Td>
-          <Link href="">-</Link>
+          <Text>{e?.quantidadeAtletas ?? ""}</Text>
         </Td>
         <Td>
           <IconButton
             aria-label="Editar"
             icon={<EditIcon />}
-            onClick={onEdit}
+            onClick={() => onEdit(e)}
             isRound
           />
         </Td>
@@ -82,7 +93,7 @@ export default function GenericTable({
         </Td>
       </Tr>
     ));
-
+  };
   return (
     <TableContainer>
       <Table variant="simple">
@@ -92,7 +103,7 @@ export default function GenericTable({
         <Tbody>
           {(loading || error) && (
             <Tr>
-              <Td colSpan={6}>
+              <Td colSpan={10}>
                 <Center>
                   {loading && (
                     <Spinner
