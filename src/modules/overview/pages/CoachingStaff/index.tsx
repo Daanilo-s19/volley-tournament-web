@@ -145,7 +145,11 @@ export default function CoachingStaff() {
               />
             </Tooltip>
           </Flex>
-          <CoachTable items={[]} />
+          <CoachTable
+            items={team?.tecnico ? [team.tecnico] : []}
+            loading={isLoadingTeam}
+            error={isErrorTeam}
+          />
         </Box>
 
         <AssistantStaff
