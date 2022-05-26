@@ -58,14 +58,18 @@ export default function useMatches() {
     refetch: refetchReferee,
     isLoading: isLoadingReferee,
     isError: isErrorReferee,
-  } = useQuery<PersonOutput[]>(["referees", leagueID], () => fetchReferee(leagueID));
+  } = useQuery<PersonOutput[]>(["referees", leagueID], () => fetchReferee(leagueID), {
+    enabled: Boolean(leagueID)
+  });
 
   const {
     data: delegates,
     refetch: refetchDelegates,
     isLoading: isLoadingDelegates,
     isError: isErrorDelegates,
-  } = useQuery<PersonOutput[]>(["delegates", leagueID], () => fetchDelegate(leagueID));
+  } = useQuery<PersonOutput[]>(["delegates", leagueID], () => fetchDelegate(leagueID),  {
+    enabled: Boolean(leagueID)
+  });
 
   const { mutate: onCreateReferee, isLoading: isLoadingCreateReferee } =
     useMutation(createReferee, {
