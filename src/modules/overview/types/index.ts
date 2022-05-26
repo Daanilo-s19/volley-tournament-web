@@ -1,4 +1,4 @@
-type genrerType = "masculino" | "feminino";
+export type genrerType = "masculino" | "feminino";
 type roleType = "tecnico" | "";
 
 export interface Coach {
@@ -55,22 +55,6 @@ export interface CreateCoachVariables {
   genero: genrerType;
   idade: number;
   documentoCbv: string;
-}
-
-export interface CreateLeagueOutput {
-  id: string;
-  genero: string;
-  iniciadaEm: string;
-  nome: string;
-  serie: string;
-}
-
-export interface LeagueOutput {
-  id: string;
-  genero: string;
-  iniciadaEm: string;
-  nome: string;
-  serie: string;
 }
 
 export interface CreateStadiumInput {
