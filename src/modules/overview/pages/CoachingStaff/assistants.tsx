@@ -1,176 +1,170 @@
+import { isValidCPF } from "@brazilian-utils/brazilian-utils";
 import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
+  Heading,
+  Text,
   Flex,
+  Tooltip,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
   FormControl,
   FormLabel,
-  Heading,
-  IconButton,
   Input,
-  Modal,
   ModalBody,
+  Select,
+  Button,
   ModalCloseButton,
-  ModalContent,
   ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Text,
-  Tooltip,
   useToast,
 } from "@chakra-ui/react";
+import dayjs from "dayjs";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import { Coach } from "../../../../entities/person/coach";
+import { useMutation } from "react-query";
+import { ModalType } from ".";
+import {
+  Assistant,
+  AssistantType,
+} from "../../../../entities/person/assistant";
 import { api } from "../../../../libs/axios";
-import parseResponseData from "../../../../utils/parsers";
-import { isValidCPF } from "@brazilian-utils/brazilian-utils";
-import { CoachTable } from "./table";
-import dayjs from "dayjs";
-import { AssistantStaff } from "./assistants";
-import { Team } from "../../../../entities/team";
+import { ASSISTANT_TYPES } from "../../../../utils/assistants";
+import { AssistantTable } from "./table";
 
-export type ModalType = "create" | "edit";
-
-interface CreateCoachForm {
+interface CreateAssistantForm {
+  documentoCref: string;
+  idEquipe: string;
+  tipoAuxiliar: AssistantType;
   nome: string;
   documento: string;
   genero: string;
   dataNascimento: string;
   documentoCbv: string;
-  documentoCref: string;
 }
 
-export default function CoachingStaff() {
+interface AssistantStaffProps {
+  isLoadingAssistants?: boolean;
+  assistants?: Assistant[];
+  isErrorAssistants?: boolean;
+  refetchAssistants(): void;
+}
+
+function AssistantStaff({
+  assistants,
+  isLoadingAssistants,
+  isErrorAssistants,
+  refetchAssistants,
+}: AssistantStaffProps) {
   const [modalStatus, setModalStatus] = useState<ModalType>(undefined);
+
+  const toast = useToast();
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CreateCoachForm>();
-
-  const toast = useToast();
+  } = useForm<CreateAssistantForm>();
 
   const {
     query: { idEquipe },
   } = useRouter();
 
   const {
-    data: team,
-    refetch: refetchEquipe,
-    isLoading: isLoadingTeam,
-    isError: isErrorTeam,
-  } = useQuery<Team>(
-    ["equipe", idEquipe],
-    () => api.get(`/equipe/${idEquipe}`).then(parseResponseData),
-    { onSuccess: (d) => console.log(d), enabled: Boolean(idEquipe) }
+    mutate: createAssistantMutation,
+    isLoading: isLoadingCreateAssistantCoach,
+  } = useMutation(
+    (newAssistant: CreateAssistantForm) =>
+      api.post("/pessoa/auxiliar", { idEquipe: idEquipe, ...newAssistant }),
+    {
+      onSuccess: () => {
+        toast({
+          title: "Sucesso.",
+          description: "Auxiliar criado com sucesso.",
+          status: "success",
+          duration: 9000,
+          position: "bottom-right",
+          isClosable: true,
+        });
+        reset();
+        setModalStatus(undefined);
+        refetchAssistants();
+      },
+      onError: () => {
+        toast({
+          title: "Ops.",
+          description: "Houve algum erro ao cadastrar um técnico. ",
+          status: "error",
+          position: "bottom-right",
+          duration: 9000,
+          isClosable: true,
+        });
+      },
+    }
   );
 
-  const { mutate: createCoachMutation, isLoading: isLoadingCreateCoach } =
-    useMutation(
-      (newCoach: CreateCoachForm) =>
-        api.post("/pessoa/tecnico", {
-          idEquipe: idEquipe,
-          ...newCoach,
-        }),
-      {
-        onSuccess: () => {
-          toast({
-            title: "Sucesso.",
-            description: "Técnico criado com sucesso.",
-            status: "success",
-            duration: 9000,
-            position: "bottom-right",
-            isClosable: true,
-          });
-          reset();
-          setModalStatus(undefined);
-          refetchEquipe();
-        },
-        onError: () => {
-          toast({
-            title: "Ops.",
-            description: "Houve algum erro ao cadastrar um técnico. ",
-            status: "error",
-            position: "bottom-right",
-            duration: 9000,
-            isClosable: true,
-          });
-        },
-      }
-    );
+  function closeCreateCoachingStaff() {
+    setModalStatus(undefined);
+  }
 
-  function createCoach({ dataNascimento, genero, ...rest }: CreateCoachForm) {
-    createCoachMutation({
+  function createAssistant({
+    dataNascimento,
+    genero,
+    ...rest
+  }: CreateAssistantForm) {
+    createAssistantMutation({
       dataNascimento: dayjs(dataNascimento).toISOString(),
       genero: genero.toLowerCase(),
       ...rest,
     });
   }
 
-  function editCoach(updatedCoach: CreateCoachForm) {
-    console.log(updatedCoach);
-  }
-
-  function closeCreateCoachingStaff() {
-    setModalStatus(undefined);
-  }
+  function editAssistant() {}
 
   return (
     <Box>
-      <Flex direction="column" gap="4">
-        <Box>
-          <Heading as="h3" size="lg" margin="48px 0 0">
-            Técnico
-          </Heading>
-          <Flex
-            flexDirection="row"
-            alignContent="center"
-            justifyContent="space-between"
-          >
-            <Text fontSize="lg" marginY="24px">
-              Dados do técnico do clube.
-            </Text>
-            <Tooltip label="Adicionar técnico">
-              <IconButton
-                colorScheme="blue"
-                aria-label="adicionar técnico"
-                icon={<AddIcon />}
-                onClick={() => setModalStatus("create")}
-                isRound
-              />
-            </Tooltip>
-          </Flex>
-          <CoachTable
-            items={team?.tecnico ? [team.tecnico] : []}
-            loading={isLoadingTeam}
-            error={isErrorTeam}
+      <Heading as="h4" size="lg" margin="48px 0 0">
+        Comissão Técnica
+      </Heading>
+      <Flex
+        flexDirection="row"
+        alignContent="center"
+        justifyContent="space-between"
+      >
+        <Text fontSize="lg" marginY="24px">
+          Acompanhe e realize alterações na comissão técnica do clube.
+        </Text>
+        <Tooltip label="Adicionar assistente técnico">
+          <IconButton
+            colorScheme="blue"
+            aria-label="adicionar assistente técnico"
+            icon={<AddIcon />}
+            onClick={() => setModalStatus("create")}
+            isRound
           />
-        </Box>
-
-        <AssistantStaff
-          assistants={team?.auxiliares ?? []}
-          isLoadingAssistants={isLoadingTeam}
-          isErrorAssistants={isErrorTeam}
-          refetchAssistants={refetchEquipe}
-        />
+        </Tooltip>
       </Flex>
-
+      <AssistantTable
+        items={assistants}
+        loading={isLoadingAssistants}
+        error={isErrorAssistants}
+      />
       <Modal isOpen={Boolean(modalStatus)} onClose={closeCreateCoachingStaff}>
         <ModalOverlay />
-
         <ModalContent>
           <ModalHeader>
-            {modalStatus === "create" ? "Adicionar Técnico" : "Editar Técnico"}
+            {modalStatus === "create"
+              ? "Adicionar assistente técnico"
+              : "Editar  assistente técnico"}
           </ModalHeader>
 
           <form
             onSubmit={handleSubmit(
-              modalStatus === "create" ? createCoach : editCoach
+              modalStatus === "create" ? createAssistant : editAssistant
             )}
           >
             <ModalBody pb={6}>
@@ -179,7 +173,22 @@ export default function CoachingStaff() {
                 <Input {...register("nome", { required: true })} />
                 {errors.nome && (
                   <Text color="red" fontSize="10">
-                    Insira o nome do técnico
+                    Insira o nome do assistente técnico
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Tipo</FormLabel>
+                <Select {...register("tipoAuxiliar", { required: true })}>
+                  {Object.entries(ASSISTANT_TYPES).map((tipoAuxiliar) => (
+                    <option key={tipoAuxiliar[0]} value={tipoAuxiliar[0]}>
+                      {tipoAuxiliar[1]}
+                    </option>
+                  ))}
+                </Select>
+                {errors.tipoAuxiliar && (
+                  <Text color="red" fontSize="10">
+                    Insira o tipo do assistente técnico
                   </Text>
                 )}
               </FormControl>
@@ -283,7 +292,7 @@ export default function CoachingStaff() {
               <Button
                 colorScheme="blue"
                 type="submit"
-                isLoading={isLoadingCreateCoach}
+                isLoading={isLoadingCreateAssistantCoach}
               >
                 {modalStatus === "create" ? "Criar" : "Editar"}
               </Button>
@@ -296,3 +305,5 @@ export default function CoachingStaff() {
     </Box>
   );
 }
+
+export { AssistantStaff };
