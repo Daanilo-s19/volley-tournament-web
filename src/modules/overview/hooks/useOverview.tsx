@@ -2,13 +2,12 @@ import { useDisclosure, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAppState from "../../../hooks/useAppState";
-import LeagueService from "../services/leagueServices";
+import useLeague from "../../common/hooks/useLeague";
 import OverViewService from "../services/overviewService";
 import {
   CreateStadiumInput,
   CreateTeamInput,
   FormType,
-  LeagueOutput,
   TeamOutput,
 } from "../types";
 
@@ -19,18 +18,25 @@ export default function useOverview() {
     onOpen: onOpenCreateTeam,
     onClose: onCloseCreateTeam,
   } = useDisclosure();
+
   const {
     isOpen: isOpenEditTeam,
     onOpen: onOpenEditTeam,
     onClose: onCloseEditTeam,
   } = useDisclosure();
 
+  const {
+    currentLeague,
+    deleteLeague,
+    createLeague,
+    leagues,
+    onFetchLeague,
+    isLoadingLeagues,
+  } = useLeague();
+
   const { fetchTeams, createTeam, updateTeam, deleteTeam, createStadium } =
     OverViewService();
-  const { fetchLeague, deleteLeague, createLeague } = LeagueService();
 
-  const [leagues, setLeagues] = useState<LeagueOutput[]>([]);
-  const [currentLeague, setCurrentLeague] = useState<LeagueOutput | null>();
   const [currentTeam, setcurrentTeam] = useState<TeamOutput | null>();
 
   const [teams, setTeams] = useState<TeamOutput[]>([]);
@@ -42,10 +48,6 @@ export default function useOverview() {
     formState: { errors },
   } = useForm<FormType>();
   const toast = useToast();
-
-  useEffect(() => {
-    onFetchLeague();
-  }, []);
 
   useEffect(() => {
     currentLeague?.id && onFetchTeams(currentLeague?.id);
@@ -140,21 +142,6 @@ export default function useOverview() {
     }
   };
 
-  const onFetchLeague = async () => {
-    try {
-      setState({ error: false, loading: true });
-      const result = await fetchLeague();
-      setLeagues(result);
-
-      const league = result?.[0];
-      setCurrentLeague(league);
-
-      setState({ error: false, loading: false });
-    } catch (error) {
-      setState({ loading: false, error: true });
-      toastError();
-    }
-  };
   const initializeLeague = async (id: string) => {
     try {
       setState({ error: false, loading: true });
@@ -205,5 +192,6 @@ export default function useOverview() {
     currentTeam,
     setcurrentTeam,
     reset,
+    isLoadingLeagues,
   };
 }

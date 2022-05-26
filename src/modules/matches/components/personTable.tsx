@@ -15,16 +15,16 @@ import {
   Text,
   IconButton,
 } from "@chakra-ui/react";
-import { TeamOutput } from "../types";
-import { useRouter } from "next/router";
+import { PersonOutput } from "../types";
+
 interface Props {
-  items: Array<TeamOutput>;
+  items: Array<PersonOutput>;
   loading: boolean;
   error: boolean;
-  onEdit(item: TeamOutput): void;
-  onDelete(item: TeamOutput): void;
+  onEdit(item: PersonOutput): void;
+  onDelete(item: PersonOutput): void;
 }
-export default function GenericTable({
+export default function PersonTable({
   items,
   loading,
   error,
@@ -32,66 +32,39 @@ export default function GenericTable({
   onDelete,
 }: Props) {
   const getHead = () =>
-    [
-      "Brasao",
-      "Nome",
-      "Atletas",
-      "Comissão técnica",
-      "Total",
-      "Apto",
-      "Observação",
-      // "Criado em",
-      // "Atualizado em",
-      "",
-      "",
-    ].map((e) => <Th key={e}>{e}</Th>);
+    ["nome", "documento", "genero", "idade", "documentoCbv"].map((e, key) => (
+      <Th key={key}>{e}</Th>
+    ));
 
   const getBody = () => {
+    console.log("items", items);
+
     if (items.length === 0 && !error)
       return (
         <Td colSpan={10}>
           <Center>
-            <Text>Ainda não há clubes nessa Liga</Text>
+            <Text>Ainda não houveram cadastros realizados</Text>
           </Center>
         </Td>
       );
-
-    return items.map((e) => (
-      <Tr key={e.id}>
+    return items.map((e, key) => (
+      <Tr key={key}>
         <Td>
-          <AspectRatio maxW="40px" ratio={4 / 3}>
-            <Image src={e.urlBrasao} alt="brasao" objectFit="cover" />
-          </AspectRatio>
+          <Text>{e?.nome ?? ""}</Text>
         </Td>
         <Td>
-          <Link href={`/jogadores`}>{e?.nome ?? "-"}</Link>
+          <Text>{e?.documento ?? ""}</Text>
         </Td>
         <Td>
-          <Link href={`/visao-geral/jogadores?id=${e.id}`}>
-            {e?.quantidadeAtletas ?? "-"}
-          </Link>
+          <Text>{e?.genero ?? ""}</Text>
         </Td>
         <Td>
-          <Link href={`/visao-geral/comissao-tecnica/${e.id}`}>
-            {e?.quantidadeAuxiliares ?? "-"}
-          </Link>
+          <Text>{e?.idade ?? ""}</Text>
         </Td>
         <Td>
-          <Text>{e?.quantidadeAtletas + e?.quantidadeAuxiliares ?? 0}</Text>
-        </Td>
-        <Td>
-          <Text>{e?.apta ? "Sim" : " Não"}</Text>
-        </Td>
-        <Td>
-          <Text>{e?.descricaoAptidao[0]}</Text>
+          <Text>{e?.documentoCbv ?? ""}</Text>
         </Td>
         {/* <Td>
-          <Text>{e?.dataCriacao ?? "-"}</Text>
-        </Td>
-        <Td>
-          <Text>{e?.dataAtualizacao ?? "-"}</Text>
-        </Td> */}
-        <Td>
           <IconButton
             aria-label="Editar"
             icon={<EditIcon />}
@@ -106,7 +79,7 @@ export default function GenericTable({
             onClick={() => onDelete(e)}
             isRound
           />
-        </Td>
+        </Td> */}
       </Tr>
     ));
   };
@@ -132,7 +105,7 @@ export default function GenericTable({
                   )}
                   {error && (
                     <Text>
-                      Não foi possivel exibir os clubes no momento. tente
+                      Não foi possivel exibir os dados no momento. tente
                       novamente mais tarde
                     </Text>
                   )}

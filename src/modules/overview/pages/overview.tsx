@@ -23,6 +23,7 @@ import {
 } from "@chakra-ui/react";
 import useOverview from "../hooks/useOverview";
 import GenericTable from "../components/genericTable";
+import SelectLeague from "../../common/components/selectLeague";
 
 export function OverviewPage() {
   const {
@@ -52,6 +53,7 @@ export function OverviewPage() {
     currentTeam,
     setcurrentTeam,
     reset,
+    isLoadingLeagues,
   } = useOverview();
 
   const renderCreateClubModal = () => {
@@ -164,30 +166,13 @@ export function OverviewPage() {
       </Modal>
     );
   };
-  const renderLeagues = () => {
-    return (
-      <Select
-        placeholder=" Selecionar Liga"
-        margin="0 0 12px"
-        onChange={(e) => onFetchTeams(e.target.value)}
-      >
-        {leagues.map((e) => (
-          <option value={e.id} selected={currentLeague?.id === e.id}>
-            {e.nome ?? "-"}
-          </option>
-        ))}
-      </Select>
-    );
-  };
+
   return (
     <Box>
       <Heading as="h3" size="lg" margin="48px 0 0">
         {user?.token && `Bem vindo, ${user.token}`}
       </Heading>
-      <Heading as="h4" size="md" margin="24px 0 12px">
-        Selecionar Liga
-      </Heading>
-      {renderLeagues()}
+      <SelectLeague onChange={(e) => onFetchTeams(e)} />
       <Box>
         <Text>
           <b>id: </b> {currentLeague?.id}
@@ -253,7 +238,7 @@ export function OverviewPage() {
       </Flex>
       <GenericTable
         items={teams}
-        loading={state.loading}
+        loading={state.loading || isLoadingLeagues}
         error={state.error}
         onEdit={(item) => {
           reset({ ...item });

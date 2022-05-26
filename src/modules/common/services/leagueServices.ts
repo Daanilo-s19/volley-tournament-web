@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ApiService } from "../../../services/service";
-import { CreateLeagueOutput, LeagueOutput } from "../types";
+import { CreateLeagueOutput, LeagueOutput } from "../types/leagueType";
 
 export default function LeagueService() {
   const fetchLeague = async (): Promise<CreateLeagueOutput[]> => {
