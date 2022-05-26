@@ -31,6 +31,7 @@ export interface TeamOutput {
   idLiga: string;
   idGinasio: string;
   quantidadeAtletas: number;
+  quantidadeAuxiliares: number;
 }
 
 export interface FetchTeamsOutput {
@@ -94,3 +95,22 @@ export interface FormType {
   city: string;
   state: string;
 }
+
+export interface PlayerOutput {
+  id: string;
+  numero: number;
+  idEquipe: string;
+  posicao: posicaoType;
+  nome: string;
+  documento: string;
+  genero: string;
+  idade: string;
+  documentoCbv: string;
+}
+
+export type posicaoType =
+  | "ponta"
+  | "oposto"
+  | "central"
+  | "libero"
+  | "levantador";
