@@ -25,15 +25,6 @@ export default function useMatches() {
     onClose: onCloseEdit,
   } = useDisclosure();
 
-  useEffect(() => {
-    fetchAll();
-  }, [leagueID]);
-
-  const fetchAll = async () => {
-    await refetchReferee();
-    await refetchDelegates();
-  };
-
   const {
     register,
     handleSubmit,
@@ -67,18 +58,14 @@ export default function useMatches() {
     refetch: refetchReferee,
     isLoading: isLoadingReferee,
     isError: isErrorReferee,
-  } = useQuery<PersonOutput[]>("fetchReferee", () => fetchReferee(leagueID), {
-    onSuccess: (d) => console.log(d),
-  });
+  } = useQuery<PersonOutput[]>(["referees", leagueID], () => fetchReferee(leagueID));
 
   const {
     data: delegates,
     refetch: refetchDelegates,
     isLoading: isLoadingDelegates,
     isError: isErrorDelegates,
-  } = useQuery<PersonOutput[]>("fetchDelegate", () => fetchDelegate(leagueID), {
-    onSuccess: (d) => console.log(d),
-  });
+  } = useQuery<PersonOutput[]>("delegates", () => fetchDelegate(leagueID));
 
   const { mutate: onCreateReferee, isLoading: isLoadingCreateReferee } =
     useMutation(createReferee, {

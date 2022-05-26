@@ -44,7 +44,7 @@ export function OverviewPage() {
     register,
     handleSubmit,
     errors,
-
+    setCurrentLeague,
     state,
     teams,
     leagues,
@@ -172,7 +172,7 @@ export function OverviewPage() {
       <Heading as="h3" size="lg" margin="48px 0 0">
         {user?.token && `Bem vindo, ${user.token}`}
       </Heading>
-      <SelectLeague onChange={(e) => onFetchTeams(e)} />
+      <SelectLeague onChange={setCurrentLeague} />
       <Box>
         <Text>
           <b>id: </b> {currentLeague?.id}

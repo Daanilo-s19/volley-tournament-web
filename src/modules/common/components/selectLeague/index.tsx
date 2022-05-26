@@ -1,9 +1,10 @@
 import { Heading, Select } from "@chakra-ui/react";
 import React from "react";
 import useLeague from "../../hooks/useLeague";
+import { LeagueOutput } from "../../types/leagueType";
 
 export interface Props {
-  onChange(value: string): void;
+  onChange(value: LeagueOutput): void;
 }
 
 export default function SelectLeague({ onChange }: Props) {
@@ -14,7 +15,10 @@ export default function SelectLeague({ onChange }: Props) {
       <Select
         placeholder=" Selecionar Liga"
         margin="0 0 12px"
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          const league = leagues.find(league => league.id === e.target.value);
+          onChange(league)
+        }}
       >
         {leagues?.map((e) => (
           <option value={e.id} selected={currentLeague?.id === e.id}>

@@ -186,8 +186,8 @@ export function MatchesPage() {
   return (
     <Box>
       <SelectLeague
-        onChange={async (id) => {
-          setLeagueID(id);
+        onChange={(league) => {
+          setLeagueID(league.id);
         }}
       />
 

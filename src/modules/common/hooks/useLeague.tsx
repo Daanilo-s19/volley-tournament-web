@@ -12,10 +12,8 @@ export default function useLeague() {
     data: leagues,
     refetch: onFetchLeague,
     isLoading: isLoadingLeagues,
-  } = useQuery<LeagueOutput[]>("fetchLeague", fetchLeague, {
+  } = useQuery<LeagueOutput[]>("league", fetchLeague, {
     onSuccess: (d) => {
-      const league = d?.[0];
-      setCurrentLeague(league);
     },
   });
 

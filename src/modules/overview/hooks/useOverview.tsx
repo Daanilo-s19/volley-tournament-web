@@ -29,6 +29,7 @@ export default function useOverview() {
     currentLeague,
     deleteLeague,
     createLeague,
+    setCurrentLeague,
     leagues,
     onFetchLeague,
     isLoadingLeagues,
@@ -191,6 +192,7 @@ export default function useOverview() {
     currentLeague,
     currentTeam,
     setcurrentTeam,
+    setCurrentLeague,
     reset,
     isLoadingLeagues,
   };
