@@ -65,7 +65,7 @@ export default function useMatches() {
     refetch: refetchDelegates,
     isLoading: isLoadingDelegates,
     isError: isErrorDelegates,
-  } = useQuery<PersonOutput[]>("delegates", () => fetchDelegate(leagueID));
+  } = useQuery<PersonOutput[]>(["delegates", leagueID], () => fetchDelegate(leagueID));
 
   const { mutate: onCreateReferee, isLoading: isLoadingCreateReferee } =
     useMutation(createReferee, {
