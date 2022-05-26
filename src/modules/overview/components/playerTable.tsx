@@ -15,16 +15,16 @@ import {
   Text,
   IconButton,
 } from "@chakra-ui/react";
-import { TeamOutput } from "../types";
-import { useRouter } from "next/router";
+import { PlayerOutput } from "../types";
+
 interface Props {
-  items: Array<TeamOutput>;
+  items: Array<PlayerOutput>;
   loading: boolean;
   error: boolean;
-  onEdit(item: TeamOutput): void;
-  onDelete(item: TeamOutput): void;
+  onEdit(item: PlayerOutput): void;
+  onDelete(item: PlayerOutput): void;
 }
-export default function GenericTable({
+export default function PlayerTable({
   items,
   loading,
   error,
@@ -32,18 +32,13 @@ export default function GenericTable({
   onDelete,
 }: Props) {
   const getHead = () =>
-    [
-      "Brasao",
-      "Nome",
-      "Atletas",
-      "Comissão técnica",
-      "Comissão médica",
-      "Total",
-      "",
-      "",
-    ].map((e) => <Th key={e}>{e}</Th>);
+    ["nome", "posicao", "documento", "genero", "idade", "documentoCbv"].map(
+      (e, key) => <Th key={key}>{e}</Th>
+    );
 
   const getBody = () => {
+    console.log("items", items);
+
     if (items.length === 0 && !error)
       return (
         <Td colSpan={10}>
@@ -52,32 +47,25 @@ export default function GenericTable({
           </Center>
         </Td>
       );
-
-    return items.map((e) => (
-      <Tr key={e.id}>
+    return items.map((e, key) => (
+      <Tr key={key}>
         <Td>
-          <AspectRatio maxW="40px" ratio={4 / 3}>
-            <Image src={e.urlBrasao} alt="brasao" objectFit="cover" />
-          </AspectRatio>
+          <Text>{e?.nome ?? ""}</Text>
         </Td>
         <Td>
-          <Link href={`/jogadores`}>{e?.nome ?? "-"}</Link>
+          <Text>{e?.posicao ?? ""}</Text>
         </Td>
         <Td>
-          <Link href={`/visao-geral/jogadores?id=${e.id}`}>
-            {e?.quantidadeAtletas ?? "-"}
-          </Link>
+          <Text>{e?.documento ?? ""}</Text>
         </Td>
         <Td>
-          <Link href={`/visao-geral/comissao-tecnica/${e.id}`}>
-            {e?.quantidadeAuxiliares ?? "-"}
-          </Link>
+          <Text>{e?.genero ?? ""}</Text>
         </Td>
         <Td>
-          <Link href="">{"-"}</Link>
+          <Text>{e?.idade ?? ""}</Text>
         </Td>
         <Td>
-          <Text>{e?.quantidadeAtletas + e?.quantidadeAuxiliares ?? 0}</Text>
+          <Text>{e?.documentoCbv ?? ""}</Text>
         </Td>
         <Td>
           <IconButton
