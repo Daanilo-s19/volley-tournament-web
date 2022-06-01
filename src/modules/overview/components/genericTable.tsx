@@ -51,7 +51,7 @@ export default function GenericTable({
       return (
         <Td colSpan={10}>
           <Center>
-            <Text>Ainda não há clubes nessa Liga</Text>
+            <Text>Ainda não há Técnicos nessa Liga</Text>
           </Center>
         </Td>
       );
