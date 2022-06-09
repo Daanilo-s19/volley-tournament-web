@@ -16,7 +16,7 @@ export default function Navbar() {
             Visão geral
           </Button>
           <Button onClick={() => router.push("/partidas")}>Partidas</Button>
-          <Button>classificação</Button>
+          <Button onClick={() => router.push("/ligas")}>Classificação</Button>
         </ButtonGroup>
         <Button colorScheme="blue" onClick={onOpenAuthModal}>
           Entrar

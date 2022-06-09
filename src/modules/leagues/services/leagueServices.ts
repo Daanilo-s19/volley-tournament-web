@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ApiService } from "../../../services/service";
-import { CreateLeagueOutput, LeagueOutput } from "../types/leagueType";
+import { CreateLeagueOutput, LeagueClassificationOutput, LeagueOutput } from "../types/leagueType";
 
 export default function LeagueService() {
   const fetchLeague = async (): Promise<CreateLeagueOutput[]> => {
@@ -42,10 +42,23 @@ export default function LeagueService() {
       throw error;
     }
   };
+
+  const getLeagueClassification = async (id?: string): Promise<LeagueClassificationOutput[]> =>{
+    try {
+      if(id){
+        const response = await ApiService.get('pontuacao', {params: {idLiga: id}});
+        return response.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     createLeague,
     fetchLeague,
     searchLeague,
     deleteLeague,
+    getLeagueClassification,
   };
 }

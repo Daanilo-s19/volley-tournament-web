@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import useOverview from "../hooks/useOverview";
 import GenericTable from "../components/genericTable";
-import SelectLeague from "../../common/components/selectLeague";
+import SelectLeague from "../../leagues/components/selectLeague";
 
 export function OverviewPage() {
   const {
