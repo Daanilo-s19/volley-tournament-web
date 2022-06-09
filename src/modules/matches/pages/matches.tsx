@@ -34,7 +34,7 @@ import MatchesTables from "../components/matchesTable";
 import PersonTable from "../components/personTable";
 
 import useMatches from "../hooks/useMatches";
-import SelectLeague from "../../common/components/selectLeague";
+import SelectLeague from "../../leagues/components/selectLeague";
 import dayjs from "dayjs";
 
 export function MatchesPage() {
