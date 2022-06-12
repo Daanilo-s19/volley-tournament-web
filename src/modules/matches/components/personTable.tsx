@@ -37,8 +37,6 @@ export default function PersonTable({
     ));
 
   const getBody = () => {
-    console.log("items", items);
-
     if (items.length === 0 && !error)
       return (
         <Td colSpan={10}>

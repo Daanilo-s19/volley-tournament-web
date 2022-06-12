@@ -65,7 +65,6 @@ export function MatchesPage() {
     onCloseEdit,
 
     onSubmit,
-
     setLeagueID,
   } = useMatches();
 
@@ -185,11 +184,7 @@ export function MatchesPage() {
 
   return (
     <Box>
-      <SelectLeague
-        onChange={async (id) => {
-          setLeagueID(id);
-        }}
-      />
+      <SelectLeague onStart={false} onChange={setLeagueID} />
 
       <Flex
         flexDirection="row"
