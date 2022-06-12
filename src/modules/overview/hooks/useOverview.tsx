@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAppState from "../../../hooks/useAppState";
 import useLeague from "../../common/hooks/useLeague";
+import { DayType, InitLeagueInput } from "../../common/types/leagueType";
 import OverViewService from "../services/overviewService";
 import {
   CreateStadiumInput,
@@ -26,9 +27,15 @@ export default function useOverview() {
   } = useDisclosure();
 
   const {
+    isOpen: isOpenInitializeLeague,
+    onOpen: onOpenInitializeLeague,
+    onClose: onCloseInitializeLeague,
+  } = useDisclosure();
+
+  const {
     currentLeague,
     deleteLeague,
-    createLeague,
+    initLeague,
     leagues,
     onFetchLeague,
     isLoadingLeagues,
@@ -41,12 +48,23 @@ export default function useOverview() {
 
   const [teams, setTeams] = useState<TeamOutput[]>([]);
   const [state, setState] = useState({ loading: false, error: false });
+
+  const [checkDayofWeek, setDayOfWeek] = useState<DayType[]>([]);
+  const [hoursGame, setHoursGame] = useState<number[]>([]);
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormType>();
+
+  const {
+    register: registerLeague,
+    handleSubmit: handleSubmitLeague,
+    reset: resetLeague,
+    formState: { errors: errorsLeague },
+  } = useForm();
   const toast = useToast();
 
   useEffect(() => {
@@ -65,15 +83,36 @@ export default function useOverview() {
       isClosable: true,
     });
   };
-  const toastError = () => {
+  const toastError = (erroMessage?: string) => {
     toast({
       title: "Ops.",
-      description: "houve um equivoco.",
+      description: erroMessage ?? "houve um equivoco.",
       status: "error",
       position: "bottom-right",
       duration: 9000,
       isClosable: true,
     });
+  };
+
+  const addNewDay = (day: DayType) => {
+    if (checkDayofWeek.includes(day)) {
+      const removeHour = hoursGame.filter(
+        (_, index) => index !== checkDayofWeek.indexOf(day)
+      );
+      const removeDay = checkDayofWeek.filter((e) => e !== day);
+
+      setHoursGame(removeHour);
+      setDayOfWeek(removeDay);
+    } else {
+      setDayOfWeek([...checkDayofWeek, day]);
+    }
+  };
+
+  const addNewHour = (hour: string, day: DayType) => {
+    const indexOfDay = checkDayofWeek.indexOf(day);
+    hoursGame[indexOfDay] = Number.parseInt(hour.replace(":", ""));
+    const result = hoursGame;
+    setHoursGame(result);
   };
 
   const onFetchTeams = async (id: string) => {
@@ -142,14 +181,21 @@ export default function useOverview() {
     }
   };
 
-  const initializeLeague = async (id: string) => {
+  const initializeLeague = async (data) => {
+    const input: InitLeagueInput = {
+      diasDaSemana: checkDayofWeek,
+      horarios: hoursGame,
+      data: data.startAt,
+      intervaloDeDiasUteisEntreTurnos: Number.parseInt(data.interval),
+    };
+
     try {
       setState({ error: false, loading: true });
-      await createLeague(id);
+      await initLeague(currentLeague.id, input, data.inicializar);
 
       toastSuccess();
     } catch (error) {
-      toastError();
+      toastError(error.response.data.message);
     }
   };
 
@@ -161,7 +207,7 @@ export default function useOverview() {
 
       toastSuccess();
     } catch (error) {
-      toastError();
+      toastError(error.response.data.message);
     }
   };
 
@@ -174,6 +220,10 @@ export default function useOverview() {
     onOpenEditTeam,
     onCloseEditTeam,
 
+    isOpenInitializeLeague,
+    onOpenInitializeLeague,
+    onCloseInitializeLeague,
+
     onSubmitTeam,
     onDeleteTeam,
     onDeleteLeague,
@@ -183,6 +233,18 @@ export default function useOverview() {
     register,
     handleSubmit,
     errors,
+    registerLeague,
+    handleSubmitLeague,
+    resetLeague,
+    errorsLeague,
+
+    addNewDay,
+    addNewHour,
+
+    checkDayofWeek,
+    setDayOfWeek,
+    hoursGame,
+    setHoursGame,
 
     state,
     teams,
