@@ -4,10 +4,11 @@ import useLeague from "../../hooks/useLeague";
 
 export interface Props {
   onChange(value: string): void;
+  onStart?: boolean;
 }
 
-export default function SelectLeague({ onChange }: Props) {
-  const { leagues, currentLeague } = useLeague();
+export default function SelectLeague({ onChange, onStart }: Props) {
+  const { leagues, currentLeague } = useLeague(onStart);
 
   const renderLeagues = () => {
     return (

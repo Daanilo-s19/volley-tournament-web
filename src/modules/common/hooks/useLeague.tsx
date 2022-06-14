@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import LeagueService from "../services/leagueServices";
 import { LeagueOutput } from "../types/leagueType";
 
-export default function useLeague() {
+export default function useLeague(onStart: boolean = true) {
   const { fetchLeague, deleteLeague, createLeague } = LeagueService();
 
   const [currentLeague, setCurrentLeague] = useState<LeagueOutput | null>();
@@ -15,7 +15,7 @@ export default function useLeague() {
   } = useQuery<LeagueOutput[]>("fetchLeague", fetchLeague, {
     onSuccess: (d) => {
       const league = d?.[0];
-      setCurrentLeague(league);
+      onStart && setCurrentLeague(league);
     },
   });
 
