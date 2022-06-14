@@ -77,9 +77,7 @@ export default function useLeague(onStart: boolean = true) {
     refetch: onFetchClassification,
     isLoading: isLoadingClassification,
     error: classificationError,
-  } = useQuery<LeagueClassificationOutput[]>("classification", () =>  getLeagueClassification(leagueId), {
-    onSuccess: () => {console.log(leagueId)},
-    
+  } = useQuery<LeagueClassificationOutput[]>(["classification", leagueId], () =>  getLeagueClassification(leagueId), {    
     enabled: leagueId !== "",
     onError: () => toastError()
   })
