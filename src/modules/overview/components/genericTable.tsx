@@ -33,6 +33,7 @@ export default function GenericTable({
 }: Props) {
   const getHead = () =>
     [
+      "",
       "Nome",
       "Atletas",
       "Comissão técnica",
@@ -57,11 +58,11 @@ export default function GenericTable({
 
     return items.map((e) => (
       <Tr key={e.id}>
-        {/* <Td>
+        <Td>
           <AspectRatio maxW="40px" ratio={4 / 3}>
             <Image src={e.urlBrasao} alt="brasao" objectFit="cover" />
           </AspectRatio>
-        </Td> */}
+        </Td>
         <Td>
           <Link href={`/jogadores`}>{e?.nome ?? "-"}</Link>
         </Td>
