@@ -2,7 +2,7 @@ import { useDisclosure, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
-import useLeague from "../../common/hooks/useLeague";
+import useLeague from "../../leagues/hooks/useLeague";
 import MatchesService from "../services/matchesServices";
 import { Person, PersonOutput } from "../types";
 

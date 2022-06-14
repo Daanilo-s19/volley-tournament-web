@@ -30,9 +30,9 @@ import {
 } from "@chakra-ui/react";
 import useOverview from "../hooks/useOverview";
 import GenericTable from "../components/genericTable";
-import SelectLeague from "../../common/components/selectLeague";
+import SelectLeague from "../../leagues/components/selectLeague";
 import dayjs from "dayjs";
-import { DayType } from "../../common/types/leagueType";
+import { DayType } from "../../leagues/types/leagueType";
 
 export function OverviewPage() {
   const {
