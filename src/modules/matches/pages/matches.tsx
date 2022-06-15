@@ -1,6 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { EditIcon, AddIcon } from "@chakra-ui/icons";
+import {
+  EditIcon,
+  AddIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+} from "@chakra-ui/icons";
 import {
   AspectRatio,
   Box,
@@ -29,6 +34,8 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  Grid,
+  Spacer,
 } from "@chakra-ui/react";
 import MatchesTables from "../components/matchesTable";
 import PersonTable from "../components/personTable";
@@ -36,6 +43,7 @@ import PersonTable from "../components/personTable";
 import useMatches from "../hooks/useMatches";
 import SelectLeague from "../../common/components/selectLeague";
 import dayjs from "dayjs";
+import MatchCard from "../components/matchCard";
 
 export function MatchesPage() {
   const {
@@ -66,6 +74,8 @@ export function MatchesPage() {
 
     onSubmit,
     setLeagueID,
+    round,
+    selectRound,
   } = useMatches();
 
   const renderModal = () => {
@@ -238,17 +248,57 @@ export function MatchesPage() {
         <Text fontSize="lg" marginBottom="24px">
           Acompanhe e realize o cadastro das partidas.
         </Text>
-        <Tooltip label="Adicionar clube">
+        <Tooltip label="Adicionar partida">
           <IconButton
             colorScheme="blue"
-            aria-label="adicionar Clube"
+            aria-label="adicionar partida"
             icon={<AddIcon />}
             onClick={() => {}}
             isRound
           />
         </Tooltip>
       </Flex>
-      <MatchesTables />
+      <FormControl>
+        <FormLabel marginTop="12px">Selecionar rodada</FormLabel>
+        <Select
+          placeholder="rodada"
+          onChange={(e) => selectRound(e.target.value)}
+        >
+          {Array.from<Number>(new Array(30)).map((_, index) => (
+            <option value={index + 1}>{index + 1}</option>
+          ))}
+
+          {/* <option value="feminino">quartas de finais</option> */}
+        </Select>
+      </FormControl>
+      <Box background="gray" padding="16px">
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text fontSize="medium" fontWeight="bold" color="white">
+            Rodada {round}
+          </Text>
+          {/* , ArrowUpIcon */}
+          <IconButton
+            aria-label="arrow"
+            variant="unstyled"
+            color="white"
+            icon={<ArrowDownIcon />}
+            onClick={() => {}}
+          />
+        </Flex>
+      </Box>
+      <Grid gridTemplateColumns="1fr 1fr" gridAutoRows="1fr" gridGap="32px">
+        <MatchCard />
+        <MatchCard />
+        <MatchCard />
+        <MatchCard />
+        <MatchCard />
+        <MatchCard />
+        <MatchCard />
+      </Grid>
       {(isOpen || isOpenEdit) && renderModal()}
     </Box>
   );

@@ -14,14 +14,20 @@ interface FormType extends Person {
 
 export default function useMatches() {
   const toast = useToast();
-  const { fetchReferee, createDelegate, createReferee, fetchDelegate } =
-    MatchesService();
+  const {
+    fetchReferee,
+    createDelegate,
+    createReferee,
+    fetchDelegate,
+    fetchMatchPerRound,
+  } = MatchesService();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [leagueID, setLeagueID] = useState<string>();
   const [delegates, setDelegates] = useState<PersonOutput[]>();
   const [referees, setreferees] = useState<PersonOutput[]>();
+  const [round, setRound] = useState<number>(1);
 
   const {
     isOpen: isOpenEdit,
@@ -116,6 +122,25 @@ export default function useMatches() {
     refetchDelegates();
   };
 
+  const {
+    refetch: refetchMatchRound,
+    isLoading: isLoadingMatchRound,
+    isError: isErrorMatchRound,
+  } = useQuery<any[]>(
+    ["fetchMatchPerRound", leagueID, round],
+    () => fetchMatchPerRound(leagueID, round),
+    {
+      onSuccess: (e) => console.log(e),
+      onError: (d: any) => toastError(d.response.data.message),
+      enabled: leagueID != null,
+    }
+  );
+
+  const selectRound = (round: string) => {
+    setRound(Number.parseInt(round));
+    refetchMatchRound();
+  };
+
   return {
     referees,
     isLoadingReferee,
@@ -146,5 +171,7 @@ export default function useMatches() {
 
     onSubmit,
     setLeagueID,
+    round,
+    selectRound,
   };
 }
