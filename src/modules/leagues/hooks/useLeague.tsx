@@ -3,16 +3,17 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import LeagueService from "../services/leagueServices";
-import { LeagueOutput } from "../types/leagueType";
+import { LeagueClassificationOutput, LeagueOutput } from "../types/leagueType";
 
 export default function useLeague(onStart: boolean = true) {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { fetchLeague, deleteLeague, createLeague, initLeague } =
+  const { fetchLeague, deleteLeague, createLeague, initLeague, getLeagueClassification, searchLeague } =
     LeagueService();
 
   const [currentLeague, setCurrentLeague] = useState<LeagueOutput | null>();
+  const [leagueId, setLeagueID] = useState<string>("");
 
   const {
     register,
@@ -31,10 +32,10 @@ export default function useLeague(onStart: boolean = true) {
       isClosable: true,
     });
   };
-  const toastError = () => {
+  const toastError = (message?: string) => {
     toast({
       title: "Ops.",
-      description: "houve um equivoco.",
+      description: message ?? "houve um equivoco.",
       status: "error",
       position: "bottom-right",
       duration: 9000,
@@ -71,6 +72,16 @@ export default function useLeague(onStart: boolean = true) {
     },
   });
 
+  const {
+    data: classification,
+    refetch: onFetchClassification,
+    isLoading: isLoadingClassification,
+    error: classificationError,
+  } = useQuery<LeagueClassificationOutput[]>(["classification", leagueId], () =>  getLeagueClassification(leagueId), {    
+    enabled: leagueId !== "",
+    onError: () => toastError()
+  })
+
   return {
     currentLeague,
     setCurrentLeague,
@@ -92,5 +103,12 @@ export default function useLeague(onStart: boolean = true) {
     errors,
 
     onSubmit,
+
+    classification,
+    onFetchClassification,
+    isLoadingClassification,
+    classificationError,
+
+    setLeagueID,
   };
 }
