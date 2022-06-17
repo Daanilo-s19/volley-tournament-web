@@ -51,7 +51,7 @@ export default function GenericTable({
       return (
         <Td colSpan={10}>
           <Center>
-            <Text>Ainda não há Técnicos nessa Liga</Text>
+            <Text> Ainda não há Técnicos nessa Liga</Text>
           </Center>
         </Td>
       );
@@ -64,7 +64,9 @@ export default function GenericTable({
           </AspectRatio>
         </Td>
         <Td>
-          <Link href={`/jogadores`}>{e?.nome ?? "-"}</Link>
+          <Link href={`/visao-geral/classificacao?id=${e.id}`}>
+            {e?.nome ?? "-"}
+          </Link>
         </Td>
         <Td>
           <Link href={`/visao-geral/jogadores?id=${e.id}`}>

@@ -16,8 +16,8 @@ export default function SelectLeague({ onChange }: Props) {
         placeholder=" Selecionar Liga"
         margin="0 0 12px"
         onChange={(e) => {
-          const league = leagues.find(league => league.id === e.target.value);
-          onChange(league)
+          const league = leagues.find((league) => league.id === e.target.value);
+          onChange(league);
         }}
       >
         {leagues?.map((e) => (
