@@ -1,7 +1,9 @@
 import React from "react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
+
 import { Center } from "@chakra-ui/layout";
+
 import {
   Th,
   Tr,
@@ -27,9 +29,10 @@ export default function LeagueClassificationTable({
   error,
 }: Props) {
   const getHead = () =>
-    ["Equipe", "Total jogos", "Vitorias", "Derrotas", "Sets", "Pontos"].map(
-      (e, key) => <Th key={key}>{e}</Th>
-    );
+
+    ["Equipe", "Total jogos", "Vitorias", "Derrotas", "Sets","Pontos"].map((e, key) => (
+      <Th key={key}>{e}</Th>
+    ));
 
   const getBody = () => {
     if (items.length === 0 && !error)
@@ -55,9 +58,7 @@ export default function LeagueClassificationTable({
           <Text>{e?.partidasPerdidas ?? ""}</Text>
         </Td>
         <Td>
-          <Text>
-            {e?.setsGanhos ?? ""}:{e?.setsPerdidos ?? ""}
-          </Text>
+          <Text>{e?.setsGanhos ?? ""}:{e?.setsPerdidos ?? ""}</Text>
         </Td>
         <Td>
           <Text>{e.partidasGanhas * 2}</Text>

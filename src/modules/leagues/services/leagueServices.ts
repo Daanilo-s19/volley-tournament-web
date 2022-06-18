@@ -1,6 +1,13 @@
 import axios from "axios";
 import { ApiService } from "../../../services/service";
-import { CreateLeagueOutput, LeagueClassificationOutput, LeagueOutput } from "../types/leagueType";
+import {
+  CreateLeagueOutput,
+  InitilizeType,
+  InitLeagueInput,
+  LeagueClassificationOutput,
+  LeagueOutput,
+} from "../types/leagueType";
+
 
 export default function LeagueService() {
   const fetchLeague = async (): Promise<CreateLeagueOutput[]> => {
@@ -11,13 +18,14 @@ export default function LeagueService() {
       throw error;
     }
   };
-  const createLeague = async (id: string): Promise<LeagueOutput> => {
+
+  const createLeague = async (input: LeagueOutput): Promise<LeagueOutput> => {
     try {
       const response = await ApiService.post("/liga", {
-        id,
-        //TODO: marretado
-        genero: "masculino",
-        ano: "2022-05-25T11:16:08.599Z",
+        genero: input.genero,
+        nome: input.nome,
+        serie: input.serie,
+
       });
       return response.data;
     } catch (error) {
@@ -33,6 +41,24 @@ export default function LeagueService() {
       throw error;
     }
   };
+
+
+  const initLeague = async (
+    id: string,
+    input: InitLeagueInput,
+    initilizeLeague: InitilizeType
+  ): Promise<any> => {
+    try {
+      const response = await ApiService.post(
+        `/liga/${id}/${initilizeLeague}`,
+        input
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
 
   const deleteLeague = async (id: string): Promise<void> => {
     try {
@@ -59,6 +85,9 @@ export default function LeagueService() {
     fetchLeague,
     searchLeague,
     deleteLeague,
+
+    initLeague,
+
     getLeagueClassification,
   };
 }

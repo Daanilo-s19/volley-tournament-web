@@ -14,6 +14,28 @@ export interface LeagueOutput {
   serie: string;
 }
 
+export type DayType =
+  | "Segunda"
+  | "Terça"
+  | "Quarta"
+  | "Quinta"
+  | "Sexta"
+  | "Sábado"
+  | "Domingo";
+
+export type InitilizeType =
+  | "inicializa"
+  | "inicializa-quartas"
+  | "inicializa-semis"
+  | "inicializa-final";
+export interface InitLeagueInput {
+  data: string;
+  diasDaSemana: DayType[];
+  horarios: number[];
+  intervaloDeDiasUteisEntreTurnos: number;
+}
+
+
 export interface LeagueClassificationOutput{
   idEquipe: string,
   setsGanhos: number,

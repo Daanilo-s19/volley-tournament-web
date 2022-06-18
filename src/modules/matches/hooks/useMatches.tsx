@@ -16,9 +16,13 @@ export default function useMatches() {
   const toast = useToast();
   const { fetchReferee, createDelegate, createReferee, fetchDelegate } =
     MatchesService();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [leagueID, setLeagueID] = useState<string>();
+  const [delegates, setDelegates] = useState<PersonOutput[]>();
+  const [referees, setreferees] = useState<PersonOutput[]>();
+
   const {
     isOpen: isOpenEdit,
     onOpen: onOpenEdit,
@@ -54,56 +58,66 @@ export default function useMatches() {
   };
 
   const {
-    data: referees,
     refetch: refetchReferee,
     isLoading: isLoadingReferee,
     isError: isErrorReferee,
-  } = useQuery<PersonOutput[]>(["referees", leagueID], () => fetchReferee(leagueID), {
-    enabled: Boolean(leagueID)
-  });
+
+    isFetchedAfterMount: isRefetchingReferee,
+  } = useQuery<PersonOutput[]>(
+    ["fetchReferee", leagueID],
+    () => fetchReferee(leagueID),
+    {
+      onSuccess: (e) => setreferees(e),
+      onError: (d: any) => toastError(d.response.data.message),
+      enabled: leagueID != null,
+    }
+  );
+
 
   const {
-    data: delegates,
     refetch: refetchDelegates,
     isLoading: isLoadingDelegates,
     isError: isErrorDelegates,
-  } = useQuery<PersonOutput[]>(["delegates", leagueID], () => fetchDelegate(leagueID),  {
-    enabled: Boolean(leagueID)
-  });
+
+    isFetchedAfterMount: isRefetchingDelegate,
+  } = useQuery<PersonOutput[]>(
+    ["fetchDelegate", leagueID],
+    () => fetchDelegate(leagueID),
+    {
+      onSuccess: (e) => setDelegates(e),
+      onError: (d: any) => toastError(d.response.data.message),
+      enabled: leagueID != null,
+    }
+  );
+
 
   const { mutate: onCreateReferee, isLoading: isLoadingCreateReferee } =
     useMutation(createReferee, {
-      onSuccess: (d) => console.log(d),
-      onError: (d) => console.log(d),
+      onSuccess: (d) => toastSuccess(),
+      onError: (d: any) => toastError(d.response.data.message),
     });
 
   const { mutate: onCreateDelegate, isLoading: isLoadingCreateDelegate } =
     useMutation(createDelegate, {
-      onSuccess: (d) => console.log(d),
-      onError: (d) => console.log(d),
+      onSuccess: (d) => toastSuccess(),
+      onError: (d: any) => toastError(d.response.data.message),
     });
 
-  const onSubmit = async (data: FormType) => {
+  const onSubmit = (data: FormType) => {
     const input: Omit<Person, PersonType> = {
       ...data,
       idLiga: leagueID,
     };
 
-    try {
-      onClose();
-      onCloseEdit();
+    onClose();
+    onCloseEdit();
 
-      data.personType === "arbitro"
-        ? onCreateReferee(input)
-        : onCreateDelegate(input);
+    data.personType === "arbitro"
+      ? onCreateReferee(input)
+      : onCreateDelegate(input);
 
-      await refetchReferee();
-      await refetchDelegates();
-
-      toastSuccess();
-    } catch (error) {
-      toastError(error.response.data.message);
-    }
+    refetchReferee();
+    refetchDelegates();
   };
 
   return {

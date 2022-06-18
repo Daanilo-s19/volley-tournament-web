@@ -1,7 +1,7 @@
 import React from "react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 
-import { AspectRatio, Link, Center } from "@chakra-ui/layout";
+import { AspectRatio, Link, Center, Box } from "@chakra-ui/layout";
 import {
   Th,
   Tr,
@@ -37,8 +37,6 @@ export default function PersonTable({
     ));
 
   const getBody = () => {
-    console.log("items", items);
-
     if (items.length === 0 && !error)
       return (
         <Td colSpan={10}>
@@ -50,7 +48,9 @@ export default function PersonTable({
     return items.map((e, key) => (
       <Tr key={key}>
         <Td>
-          <Text>{e?.nome ?? ""}</Text>
+          <Box width="150px">
+            <Text isTruncated>{e?.nome ?? ""}</Text>
+          </Box>
         </Td>
         <Td>
           <Text>{e?.documento ?? ""}</Text>

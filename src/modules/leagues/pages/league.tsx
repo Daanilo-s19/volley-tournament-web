@@ -20,22 +20,18 @@ import LeagueClassificationTable from "../components/leaguesTable";
 import { LeagueOutput } from "../types/leagueType";
 
 export function LeaguePage() {
-  const {
-    setCurrentLeague,
-    classification,
-    classificationError,
-    isLoadingClassification,
-    onFetchClassification,
-  } = useLeague();
 
-  function onLeagueChange(league: LeagueOutput) {
-    setCurrentLeague(league);
-    onFetchClassification();
+  const {setLeagueID,classification,classificationError, isLoadingClassification, onFetchClassification } = useLeague()
+
+  async function onLeagueChange(leagueId: string) {
+    setLeagueID(leagueId);
+    await onFetchClassification();
   }
+
 
   return (
     <Box>
-      <SelectLeague onChange={onLeagueChange} />
+      <SelectLeague onChange={(e) => onLeagueChange(e)} />
       <Flex
         flexDirection="column"
         alignContent="center"
@@ -45,12 +41,9 @@ export function LeaguePage() {
         <Heading as="h3" size="lg" marginBottom={10}>
           Pontuação
         </Heading>
-        <LeagueClassificationTable
-          error={Boolean(classificationError)}
-          items={classification}
-          loading={isLoadingClassification}
-        />
+        <LeagueClassificationTable error={Boolean(classificationError)} items={classification} loading={isLoadingClassification} />
       </Flex>
     </Box>
   );
 }
+
