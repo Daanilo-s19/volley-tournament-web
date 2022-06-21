@@ -139,7 +139,7 @@ export default function useOverview() {
     const input: Omit<CreateTeamInput, "idGinasio"> = {
       idLiga: currentLeague.id,
       nome: data.nameTeam,
-      urlBrasao: data.urlLogo,
+      urlBrasao: data?.urlLogo != "" ? data?.urlLogo : null,
       cidade: data.city,
       estado: data.state,
     };
