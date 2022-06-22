@@ -4,6 +4,7 @@ import {
   CreateLeagueOutput,
   InitilizeType,
   InitLeagueInput,
+  LeagueClassificationOutput,
   LeagueOutput,
 } from "../types/leagueType";
 
@@ -62,11 +63,24 @@ export default function LeagueService() {
       throw error;
     }
   };
+
+  const getLeagueClassification = async (id?: string): Promise<LeagueClassificationOutput[]> =>{
+    try {
+      if(id){
+        const response = await ApiService.get('pontuacao', {params: {idLiga: id}});
+        return response.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     createLeague,
     fetchLeague,
     searchLeague,
     deleteLeague,
     initLeague,
+    getLeagueClassification,
   };
 }

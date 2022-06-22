@@ -30,9 +30,10 @@ import {
 } from "@chakra-ui/react";
 import useOverview from "../hooks/useOverview";
 import GenericTable from "../components/genericTable";
-import SelectLeague from "../../common/components/selectLeague";
+import SelectLeague from "../../leagues/components/selectLeague";
 import dayjs from "dayjs";
-import { DayType } from "../../common/types/leagueType";
+import { DayType } from "../../leagues/types/leagueType";
+import { statesList } from "../../../utils/states";
 
 export function OverviewPage() {
   const {
@@ -232,19 +233,14 @@ export function OverviewPage() {
                   </Text>
                 )}
               </FormControl>
-              {/* <FormControl>
+              <FormControl>
                 <FormLabel>url do brasao</FormLabel>
                 <Input
                   placeholder="url do brasao"
                   defaultValue={currentTeam?.urlBrasao}
-                  {...register("urlLogo", { required: true })}
+                  {...register("urlLogo", { required: false })}
                 />
-                {errors.urlLogo && (
-                  <Text color="red" fontSize="10">
-                    Insira o brasão do clube
-                  </Text>
-                )}
-              </FormControl> */}
+              </FormControl>
 
               {isOpenCreateTeam && (
                 <>
@@ -263,18 +259,16 @@ export function OverviewPage() {
                       </Text>
                     )}
                   </FormControl>
-                  <FormControl mt={4}>
+                  <FormControl>
                     <FormLabel>Estado</FormLabel>
-                    <Input
-                      placeholder="estado"
-                      max={2}
-                      {...register("state", {
-                        maxLength: {
-                          value: 2,
-                          message: "Digita apenas o acrônimo da cidade",
-                        },
-                      })}
-                    />
+                    <Select
+                      placeholder="Estado"
+                      {...register("state", { required: true })}
+                    >
+                      {statesList.map((e) => (
+                        <option value={e}>{e}</option>
+                      ))}
+                    </Select>
                     {errors.state && (
                       <Text color="red" fontSize="10">
                         Insira o estado

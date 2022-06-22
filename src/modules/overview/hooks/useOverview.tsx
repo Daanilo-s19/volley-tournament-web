@@ -2,8 +2,8 @@ import { useDisclosure, useToast } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAppState from "../../../hooks/useAppState";
-import useLeague from "../../common/hooks/useLeague";
-import { DayType, InitLeagueInput } from "../../common/types/leagueType";
+import useLeague from "../../leagues/hooks/useLeague";
+import { DayType, InitLeagueInput } from "../../leagues/types/leagueType";
 import OverViewService from "../services/overviewService";
 import {
   CreateStadiumInput,
@@ -139,7 +139,7 @@ export default function useOverview() {
     const input: Omit<CreateTeamInput, "idGinasio"> = {
       idLiga: currentLeague.id,
       nome: data.nameTeam,
-      urlBrasao: data.urlLogo,
+      urlBrasao: data?.urlLogo != "" ? data?.urlLogo : null,
       cidade: data.city,
       estado: data.state,
     };

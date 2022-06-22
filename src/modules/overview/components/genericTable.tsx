@@ -33,7 +33,7 @@ export default function GenericTable({
 }: Props) {
   const getHead = () =>
     [
-      "Brasao",
+      "",
       "Nome",
       "Atletas",
       "Comissão técnica",
@@ -64,7 +64,9 @@ export default function GenericTable({
           </AspectRatio>
         </Td>
         <Td>
-          <Link href={`/jogadores`}>{e?.nome ?? "-"}</Link>
+          <Link href={`/visao-geral/classificacao?id=${e.id}`}>
+            {e?.nome ?? "-"}
+          </Link>
         </Td>
         <Td>
           <Link href={`/visao-geral/jogadores?id=${e.id}`}>
