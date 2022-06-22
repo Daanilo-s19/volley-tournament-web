@@ -37,10 +37,26 @@ export default function MatchesService() {
     }
   };
 
+  const fetchMatchPerRound = async (
+    idLiga: string,
+    round: number
+  ): Promise<any> => {
+    try {
+      const response = await ApiService.get(
+        `/partida?idLiga=${idLiga}&tipoRodada=${round}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     fetchReferee,
     fetchDelegate,
     createDelegate,
     createReferee,
+
+    fetchMatchPerRound,
   };
 }
