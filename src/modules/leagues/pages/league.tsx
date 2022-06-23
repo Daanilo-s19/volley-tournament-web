@@ -20,17 +20,11 @@ import LeagueClassificationTable from "../components/leaguesTable";
 import { LeagueOutput } from "../types/leagueType";
 
 export function LeaguePage() {
-  const {setLeagueID,classification,classificationError, isLoadingClassification, onFetchClassification } = useLeague()
-
-  async function onLeagueChange(leagueId: string) {
-    setLeagueID(leagueId);
-    await onFetchClassification();
-  }
-
+  const {classification,classificationError, isLoadingClassification, onFetchClassification } = useLeague()
 
   return (
     <Box>
-      <SelectLeague onChange={(e) => onLeagueChange(e)} />
+      <SelectLeague onChange={(e) => {}} />
       <Flex
         flexDirection="column"
         alignContent="center"
