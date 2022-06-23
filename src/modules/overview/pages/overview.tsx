@@ -27,6 +27,8 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Badge,
+  Grid,
 } from "@chakra-ui/react";
 import useOverview from "../hooks/useOverview";
 import GenericTable from "../components/genericTable";
@@ -77,7 +79,15 @@ export function OverviewPage() {
     setcurrentTeam,
     reset,
     isLoadingLeagues,
+    hoursGame,
+    setCurrentHour,
+    setLeagueID,
   } = useOverview();
+
+  const missingHour =
+    checkDayofWeek.length > 0
+      ? (6 / checkDayofWeek.length - hoursGame.length).toFixed()
+      : "-";
 
   const renderInitializeLeague = () => {
     return (
@@ -125,14 +135,7 @@ export function OverviewPage() {
 
               <FormControl>
                 <FormLabel>Dias da semana:</FormLabel>
-                <Stack
-                  pl={6}
-                  mt={1}
-                  spacing={1}
-                  // flexDirection="row"
-                  // justifyContent="space-around"
-                  // flexWrap="wrap"
-                >
+                <Grid gridTemplateColumns="repeat(3, 1fr)">
                   {(
                     [
                       "Segunda",
@@ -144,34 +147,54 @@ export function OverviewPage() {
                       "Domingo",
                     ] as DayType[]
                   ).map((e) => (
-                    <>
-                      <Checkbox
-                        isChecked={checkDayofWeek.includes(e)}
-                        onChange={(_) => addNewDay(e)}
-                      >
-                        {e}
-                      </Checkbox>
-                      {checkDayofWeek.includes(e) && (
-                        <FormControl mt={4}>
-                          <FormLabel>Horário do jogo de {e}</FormLabel>
-                          <Input
-                            type="time"
-                            onChange={(time) =>
-                              addNewHour(time.target.value, e)
-                            }
-                          />
-                        </FormControl>
-                      )}
-                    </>
+                    <Checkbox
+                      isChecked={checkDayofWeek.includes(e)}
+                      disabled={
+                        checkDayofWeek.length === 6 &&
+                        !checkDayofWeek.includes(e)
+                      }
+                      onChange={(_) => addNewDay(e)}
+                    >
+                      {e}
+                    </Checkbox>
                   ))}
-                </Stack>
-                {errorsLeague.segunda && (
-                  <Text color="red" fontSize="10">
-                    preencha todos os horários dos jogos
-                  </Text>
-                )}
+                </Grid>
               </FormControl>
               <FormControl mt={4}>
+                <FormLabel>
+                  {[NaN, 4, 5].includes(checkDayofWeek.length)
+                    ? "Necessário adicionar mais um dia da semana"
+                    : `Horário dos jogos: Faltam (${missingHour}) horários`}
+                </FormLabel>
+                <Flex>
+                  <Input
+                    type="time"
+                    onChange={(time) => setCurrentHour(time.target.value)}
+                  />
+                  {missingHour > "0" && (
+                    <IconButton
+                      marginLeft="16px"
+                      colorScheme="green"
+                      aria-label="adicionar horário"
+                      icon={<AddIcon />}
+                      onClick={() => {
+                        addNewHour();
+                      }}
+                      isRound
+                    />
+                  )}
+                </Flex>
+                {hoursGame.map((e) => (
+                  <Badge
+                    variant="outline"
+                    colorScheme="green"
+                    onClick={() => addNewHour(e)}
+                  >
+                    {e}
+                  </Badge>
+                ))}
+              </FormControl>
+              {/* <FormControl mt={4}>
                 <FormLabel>Intervalo dos jogos</FormLabel>
                 <Input
                   type="number"
@@ -185,7 +208,7 @@ export function OverviewPage() {
                     Insirao intervalo dos jogos
                   </Text>
                 )}
-              </FormControl>
+              </FormControl> */}
             </ModalBody>
             <ModalFooter>
               <Button colorScheme="blue" type="submit" mr={3}>
@@ -315,7 +338,12 @@ export function OverviewPage() {
       <Heading as="h3" size="lg" margin="48px 0 0">
         {user?.token && `Bem vindo, ${user.token}`}
       </Heading>
-      <SelectLeague onChange={(e) => onFetchTeams(e)} />
+      <SelectLeague
+        onChange={(e) => {
+          onFetchTeams(e);
+          setLeagueID(e);
+        }}
+      />
       <Box>
         <Text>
           <b>id: </b> {currentLeague?.id}

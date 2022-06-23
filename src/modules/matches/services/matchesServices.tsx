@@ -1,5 +1,5 @@
 import { ApiService } from "../../../services/service";
-import { PersonOutput, Person } from "../types";
+import { PersonOutput, Person, MatchOutput } from "../types";
 export default function MatchesService() {
   const fetchReferee = async (id: string) => {
     try {
@@ -40,7 +40,7 @@ export default function MatchesService() {
   const fetchMatchPerRound = async (
     idLiga: string,
     round: number
-  ): Promise<any> => {
+  ): Promise<MatchOutput[]> => {
     try {
       const response = await ApiService.get(
         `/partida?idLiga=${idLiga}&tipoRodada=${round}`
