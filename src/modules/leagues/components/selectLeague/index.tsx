@@ -18,7 +18,7 @@ import {
   Spacer,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useEffect } from "react";
 import useLeague from "../../hooks/useLeague";
 
 export interface Props {
@@ -38,16 +38,26 @@ export default function SelectLeague({ onChange }: Props) {
     reset,
     errors,
     onSubmit,
+    setLeagueID,
+    onFetchLeague,
   } = useLeague();
+
+  async function onLeagueChange(value: string) {
+    setLeagueID(value);
+    await onFetchLeague();
+    onChange(value);
+  }
 
   const renderLeagues = () => {
     return (
       <Select
-        placeholder=" Selecionar Liga"
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onLeagueChange(e.target.value)}
       >
+        <option value="oi">
+          Selecionar Liga
+        </option>
         {leagues?.map((e) => (
-          <option value={e.id} selected={currentLeague?.id === e.id}>
+          <option value={e.id}>
             {e.nome ?? "-"}
           </option>
         ))}
