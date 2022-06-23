@@ -34,6 +34,8 @@ export default function useOverview() {
 
   const {
     currentLeague,
+    setLeagueID,
+    leagueId,
     deleteLeague,
     initLeague,
     leagues,
@@ -50,7 +52,8 @@ export default function useOverview() {
   const [state, setState] = useState({ loading: false, error: false });
 
   const [checkDayofWeek, setDayOfWeek] = useState<DayType[]>([]);
-  const [hoursGame, setHoursGame] = useState<number[]>([]);
+  const [hoursGame, setHoursGame] = useState<string[]>([]);
+  const [currentHour, setCurrentHour] = useState<string>("");
 
   const {
     register,
@@ -96,23 +99,24 @@ export default function useOverview() {
 
   const addNewDay = (day: DayType) => {
     if (checkDayofWeek.includes(day)) {
-      const removeHour = hoursGame.filter(
-        (_, index) => index !== checkDayofWeek.indexOf(day)
-      );
       const removeDay = checkDayofWeek.filter((e) => e !== day);
 
-      setHoursGame(removeHour);
       setDayOfWeek(removeDay);
     } else {
       setDayOfWeek([...checkDayofWeek, day]);
     }
   };
 
-  const addNewHour = (hour: string, day: DayType) => {
-    const indexOfDay = checkDayofWeek.indexOf(day);
-    hoursGame[indexOfDay] = Number.parseInt(hour.replace(":", ""));
-    const result = hoursGame;
-    setHoursGame(result);
+  const addNewHour = (value?: string) => {
+    const hour = value ?? currentHour;
+    const contain = hoursGame.includes(hour);
+    if (contain) {
+      const removeHour = hoursGame.filter((e) => e !== hour);
+      setHoursGame(removeHour);
+
+      return;
+    }
+    setHoursGame([...hoursGame, currentHour]);
   };
 
   const onFetchTeams = async (id: string) => {
@@ -182,22 +186,31 @@ export default function useOverview() {
   };
 
   const initializeLeague = async (data) => {
+    if (hoursGame.length * checkDayofWeek.length != 6) {
+      toastError("Verifique os dias e os horários selecionados");
+      return;
+    }
     const input: InitLeagueInput = {
       diasDaSemana: checkDayofWeek,
-      horarios: hoursGame,
+      horarios: hoursGame.map((e) => convertH2M(e)),
       data: data.startAt,
-      intervaloDeDiasUteisEntreTurnos: Number.parseInt(data.interval),
+      intervaloDeDiasUteisEntreTurnos: 5,
     };
 
     try {
       setState({ error: false, loading: true });
-      await initLeague(currentLeague.id, input, data.inicializar);
+      await initLeague(leagueId, input, data.inicializar);
 
       toastSuccess();
     } catch (error) {
-      toastError(error.response.data.message);
+      toastError(error?.response?.data?.message);
     }
   };
+
+  function convertH2M(timeInHour: string) {
+    var timeParts = timeInHour.split(":");
+    return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+  }
 
   const onDeleteLeague = async (id: string) => {
     try {
@@ -255,5 +268,7 @@ export default function useOverview() {
     setcurrentTeam,
     reset,
     isLoadingLeagues,
+    setCurrentHour,
+    setLeagueID,
   };
 }
