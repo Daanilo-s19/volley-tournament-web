@@ -83,6 +83,13 @@ export function MatchesPage() {
     onCloseCreateMatch,
 
     dataMatches,
+    openMatch,
+    match,
+
+    dataHomePlayers,
+    dataVisitingPlayers,
+    isLoadingHomePlayers,
+    isLoadingVisitingPlayers,
   } = useMatches();
 
   const renderModal = () => {
@@ -203,47 +210,6 @@ export function MatchesPage() {
     <Box>
       <SelectLeague onStart={false} onChange={setLeagueID} />
 
-      <Flex
-        flexDirection="row"
-        alignContent="center"
-        justifyContent="space-between"
-        margin="60px 0 24px"
-      >
-        <Heading as="h3" size="lg">
-          Gerenciamento de Arbitro e Delegado
-        </Heading>
-
-        <Tooltip label="Adicionar">
-          <IconButton
-            colorScheme="blue"
-            aria-label="adicionar"
-            icon={<AddIcon />}
-            onClick={onOpen ?? onOpenEdit}
-            isRound
-          />
-        </Tooltip>
-      </Flex>
-      <Heading as="h4" size="md" margin="48px 0 24px">
-        Árbitros
-      </Heading>
-
-      <PersonTable
-        items={referees}
-        loading={isLoadingReferee || isLoadingCreateReferee}
-        error={isErrorReferee}
-        onEdit={(e) => console.log(e)}
-        onDelete={(e) => console.log(e)}
-      />
-      <Heading as="h4" size="md" margin="48px 0 24px">
-        Delegados
-      </Heading>
-      <PersonTable
-        items={delegates}
-        loading={isLoadingDelegates || isLoadingCreateDelegate}
-        error={isErrorDelegates}
-        onEdit={(e) => console.log(e)}
-        onDelete={(e) => console.log(e)}
-      />
       <Heading as="h3" size="lg" margin="48px 0 24px">
         Gerenciamento de Partida
       </Heading>
@@ -291,15 +257,63 @@ export function MatchesPage() {
             mandantePtsSet={e.mandante.pontosNosSets}
             visitantePtsSet={e.visitante.pontosNosSets}
             status={e.status}
-            onClick={() => onOpenCreateMatch()}
+            onClick={() => openMatch(e)}
           />
         ))}
       </Grid>
+      <Flex
+        flexDirection="row"
+        alignContent="center"
+        justifyContent="space-between"
+        margin="60px 0 24px"
+      >
+        <Heading as="h3" size="lg">
+          Gerenciamento de Arbitro e Delegado
+        </Heading>
+
+        <Tooltip label="Adicionar">
+          <IconButton
+            colorScheme="blue"
+            aria-label="adicionar"
+            icon={<AddIcon />}
+            onClick={onOpen ?? onOpenEdit}
+            isRound
+          />
+        </Tooltip>
+      </Flex>
+      <Heading as="h4" size="md" margin="48px 0 24px">
+        Árbitros
+      </Heading>
+
+      <PersonTable
+        items={referees}
+        loading={isLoadingReferee || isLoadingCreateReferee}
+        error={isErrorReferee}
+        onEdit={(e) => console.log(e)}
+        onDelete={(e) => console.log(e)}
+      />
+      <Heading as="h4" size="md" margin="48px 0 24px">
+        Delegados
+      </Heading>
+      <PersonTable
+        items={delegates}
+        loading={isLoadingDelegates || isLoadingCreateDelegate}
+        error={isErrorDelegates}
+        onEdit={(e) => console.log(e)}
+        onDelete={(e) => console.log(e)}
+      />
       {(isOpen || isOpenEdit) && renderModal()}
       {isOpenCreateMatch && (
         <CreateMatchModal
+          arbitros={referees}
+          delegados={delegates}
           isOpen={isOpenCreateMatch}
           onClose={onCloseCreateMatch}
+          mandante={match.mandante.equipe.nome}
+          visitante={match.visitante.equipe.nome}
+          homePlayer={dataHomePlayers}
+          visitingPlayer={dataVisitingPlayers}
+          loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
         />
       )}
     </Box>

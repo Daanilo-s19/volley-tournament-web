@@ -1,11 +1,16 @@
 import { useDisclosure } from "@chakra-ui/hooks";
+import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  Center,
   Checkbox,
+  Flex,
   FormControl,
   FormLabel,
   Grid,
+  Heading,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,54 +19,118 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  Spinner,
+  Tooltip,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { PlayerOutput } from "../../../overview/types";
+import { PersonOutput } from "../../types";
 
 interface Props {
   isOpen: boolean;
   onClose(): void;
+  homePlayer: PlayerOutput[];
+  visitingPlayer: PlayerOutput[];
+
+  arbitros: PersonOutput[];
+  delegados: PersonOutput[];
+  mandante: string;
+  visitante: string;
+  loading?: boolean;
 }
 
-export default function CreateMatchModal({ isOpen, onClose }: Props) {
-  const renderReferees = () => {
+export default function CreateMatchModal({
+  isOpen,
+  onClose,
+  arbitros,
+  delegados,
+  mandante,
+  visitante,
+  loading = false,
+  homePlayer,
+  visitingPlayer,
+}: Props) {
+  const [selectedPlayer, setSelectedPlayer] = useState<
+    {
+      position: string;
+      id: string;
+      team: "mandante" | "visitante" | "arbitro";
+    }[]
+  >([]);
+
+  const addSelectedPlayer = (
+    id: string,
+    position: string,
+    team: "mandante" | "visitante" | "arbitro"
+  ) => {
+    const containPlayer = selectedPlayer.find(
+      (e) => e.position === position && e.team === team
+    );
+
+    if (!containPlayer) {
+      setSelectedPlayer([...selectedPlayer, { id, position, team }]);
+      return;
+    }
+
+    if (containPlayer.id === id) {
+      const filter = selectedPlayer.filter(
+        (e) => e.id !== id && e.position !== position
+      );
+      setSelectedPlayer(filter);
+    } else {
+      containPlayer.id = id;
+      setSelectedPlayer([...selectedPlayer, containPlayer]);
+    }
+  };
+
+  const renderReferees = (arbitros ?? []).map((e) => (
+    <option value={e.id}>
+      {e.nome}{" "}
+      {selectedPlayer.find((selected) => selected.id === e.id)
+        ? "(Selecionado)"
+        : ""}
+    </option>
+  ));
+
+  const renderDelegate = (delegados ?? []).map((e) => (
+    <option value={e.id}>{e.nome}</option>
+  ));
+
+  const renderHomePlayer = (homePlayer ?? []).map((e, index) => (
+    <option value={e.id}>
+      {e.nome}
+      {selectedPlayer.find((selected) => selected.id === e.id)
+        ? "(Selecionado)"
+        : ""}
+    </option>
+  ));
+
+  const renderVisitingPlayer = (visitingPlayer ?? []).map((e) => (
+    <option value={e.id}>
+      {e.nome}
+      {selectedPlayer.find((selected) => selected.id === e.id)
+        ? "(Selecionado)"
+        : ""}
+    </option>
+  ));
+
+  const selectReferees = () => {
     return (
       <FormControl>
         <FormLabel marginTop="28px">Selecionar Árbitros</FormLabel>
         <Grid gridTemplateColumns="repeat(4,1fr)" gap="20px">
-          <Select
-            marginBottom="8px"
-            placeholder="Árbitro principal"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
-
-          <Select
-            marginBottom="8px"
-            placeholder="Segundo Árbitro"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          <Select
-            marginBottom="8px"
-            placeholder="Terceiro Árbitro"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          <Select
-            marginBottom="8px"
-            placeholder="Quarto Árbitro"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
+          {["principal", "(2)", "(3)", "(4)"].map((e) => (
+            <Select
+              marginBottom="8px"
+              placeholder={`Árbitro ${e}`}
+              onChange={(select) =>
+                addSelectedPlayer(select.target.value, e, "arbitro")
+              }
+              // {...register("personType", { required: true })}
+            >
+              {renderReferees}
+            </Select>
+          ))}
         </Grid>
       </FormControl>
     );
@@ -76,94 +145,71 @@ export default function CreateMatchModal({ isOpen, onClose }: Props) {
       >
         <Box>
           <FormControl>
-            <FormLabel marginTop="28px">Mandante: Clube A</FormLabel>
+            <FormLabel marginTop="28px">Mandante:{mandante}</FormLabel>
             <Checkbox>Desistência</Checkbox>
           </FormControl>
-          {renderPlayerByPosition()}
+          {renderPlayerByPosition(renderHomePlayer, "mandante")}
         </Box>
         <Box>
           <FormControl>
-            <FormLabel marginTop="28px">Visitante: Clube B</FormLabel>
+            <FormLabel marginTop="28px">Visitante: {visitante}</FormLabel>
             <Checkbox>Desistência</Checkbox>
           </FormControl>
-          {renderPlayerByPosition()}
+          {renderPlayerByPosition(renderVisitingPlayer, "visitante")}
         </Box>
       </Grid>
     );
   };
 
-  const renderPlayerByPosition = () => {
+  const renderPlayerByPosition = (
+    options: JSX.Element[],
+    teamType: "mandante" | "visitante"
+  ) => {
     return (
       <Box>
-        <FormControl>
-          <FormLabel marginTop="12px">Ponta</FormLabel>
-          <Select
-            placeholder="Ponta"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          {/* {errors.genero && (
+        {["ponta", "oposto", "central", "libero", "levantador"].map(
+          (e, index) => (
+            <FormControl key={index}>
+              <FormLabel marginTop="12px">{e}</FormLabel>
+              <Select
+                placeholder={e}
+                onChange={(select) =>
+                  addSelectedPlayer(select.target.value, e, teamType)
+                }
+                // {...register("personType", { required: true })}
+              >
+                {options}
+              </Select>
+              {/* {errors.genero && (
                 <Text color="red" fontSize="10">
                   Insira o tipo do cadastro
                 </Text>
               )} */}
-        </FormControl>
+            </FormControl>
+          )
+        )}
+        <Heading marginTop="24px" as="h4" size="md">
+          Banco de reserva
+        </Heading>
         <FormControl>
-          <FormLabel marginTop="12px">Oposto</FormLabel>
-          <Select
-            placeholder="Oposto"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
-        </FormControl>
-        <FormControl>
-          <FormLabel marginTop="12px">Central</FormLabel>
-          <Select
-            placeholder="Central"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
-        </FormControl>
-        <FormControl>
-          <FormLabel marginTop="12px">Libero</FormLabel>
-          <Select
-            placeholder="Libero"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
-        </FormControl>
-        <FormControl>
-          <FormLabel marginTop="12px">Levantador</FormLabel>
-          <Select
-            placeholder="Levantador"
-            // {...register("personType", { required: true })}
-          >
-            <option value="NOME">NOME</option>
-          </Select>
-          {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
+          {Array.from<Number>(new Array(7)).map((_, index) => (
+            <Select
+              key={index}
+              marginTop="12px"
+              placeholder="reserva"
+              onChange={(select) =>
+                addSelectedPlayer(
+                  select.target.value,
+                  `reserva${index}`,
+                  teamType
+                )
+              }
+
+              // {...register("personType", { required: true })}
+            >
+              {options}
+            </Select>
+          ))}
         </FormControl>
       </Box>
     );
@@ -176,24 +222,36 @@ export default function CreateMatchModal({ isOpen, onClose }: Props) {
         <ModalHeader>Criar partida</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Box>
-            <FormControl>
-              <FormLabel marginTop="12px">Selecionar delegado</FormLabel>
-              <Select
-                placeholder="Selecionar delegado"
-                // {...register("personType", { required: true })}
-              >
-                <option value="NOME">NOME</option>
-              </Select>
-              {/* {errors.genero && (
+          {loading ? (
+            <Center>
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              />
+            </Center>
+          ) : (
+            <Box>
+              <FormControl>
+                <FormLabel marginTop="12px">Selecionar delegado</FormLabel>
+                <Select
+                  placeholder="Selecionar delegado"
+                  // {...register("personType", { required: true })}
+                >
+                  {renderDelegate}
+                </Select>
+                {/* {errors.genero && (
                 <Text color="red" fontSize="10">
                   Insira o tipo do cadastro
                 </Text>
               )} */}
-            </FormControl>
-            {renderReferees()}
-            {renderPlayersClub()}
-          </Box>
+              </FormControl>
+              {selectReferees()}
+              {renderPlayersClub()}
+            </Box>
+          )}
         </ModalBody>
 
         <ModalFooter>
