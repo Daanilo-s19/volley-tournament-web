@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import useLeague from "../../leagues/hooks/useLeague";
 import MatchesService from "../services/matchesServices";
-import { Person, PersonOutput } from "../types";
+import { MatchOutput, Person, PersonOutput } from "../types";
 
 type PersonType = "arbitro" | "delegado";
 
@@ -23,6 +23,11 @@ export default function useMatches() {
   } = MatchesService();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenCreateMatch,
+    onOpen: onOpenCreateMatch,
+    onClose: onCloseCreateMatch,
+  } = useDisclosure();
 
   const [leagueID, setLeagueID] = useState<string>();
   const [delegates, setDelegates] = useState<PersonOutput[]>();
@@ -123,14 +128,15 @@ export default function useMatches() {
   };
 
   const {
+    data: dataMatches,
     refetch: refetchMatchRound,
     isLoading: isLoadingMatchRound,
     isError: isErrorMatchRound,
-  } = useQuery<any[]>(
+  } = useQuery<MatchOutput[]>(
     ["fetchMatchPerRound", leagueID, round],
     () => fetchMatchPerRound(leagueID, round),
     {
-      onSuccess: (e) => console.log(e),
+      onSuccess: (d) => toastSuccess(),
       onError: (d: any) => toastError(d.response.data.message),
       enabled: leagueID != null,
     }
@@ -173,5 +179,11 @@ export default function useMatches() {
     setLeagueID,
     round,
     selectRound,
+
+    isOpenCreateMatch,
+    onOpenCreateMatch,
+    onCloseCreateMatch,
+
+    dataMatches,
   };
 }

@@ -44,6 +44,7 @@ import useMatches from "../hooks/useMatches";
 import SelectLeague from "../../leagues/components/selectLeague";
 import dayjs from "dayjs";
 import MatchCard from "../components/matchCard";
+import CreateMatchModal from "../components/createMatch";
 
 export function MatchesPage() {
   const {
@@ -76,6 +77,12 @@ export function MatchesPage() {
     setLeagueID,
     round,
     selectRound,
+
+    isOpenCreateMatch,
+    onOpenCreateMatch,
+    onCloseCreateMatch,
+
+    dataMatches,
   } = useMatches();
 
   const renderModal = () => {
@@ -246,17 +253,8 @@ export function MatchesPage() {
         justifyContent="space-between"
       >
         <Text fontSize="lg" marginBottom="24px">
-          Acompanhe e realize o cadastro das partidas.
+          Acompanhe e gerencie as partidas da liga.
         </Text>
-        <Tooltip label="Adicionar partida">
-          <IconButton
-            colorScheme="blue"
-            aria-label="adicionar partida"
-            icon={<AddIcon />}
-            onClick={() => {}}
-            isRound
-          />
-        </Tooltip>
       </Flex>
       <FormControl>
         <FormLabel marginTop="12px">Selecionar rodada</FormLabel>
@@ -280,26 +278,30 @@ export function MatchesPage() {
           <Text fontSize="medium" fontWeight="bold" color="white">
             Rodada {round}
           </Text>
-          {/* , ArrowUpIcon */}
-          <IconButton
-            aria-label="arrow"
-            variant="unstyled"
-            color="white"
-            icon={<ArrowDownIcon />}
-            onClick={() => {}}
-          />
         </Flex>
       </Box>
       <Grid gridTemplateColumns="1fr 1fr" gridAutoRows="1fr" gridGap="32px">
-        <MatchCard />
-        <MatchCard />
-        <MatchCard />
-        <MatchCard />
-        <MatchCard />
-        <MatchCard />
-        <MatchCard />
+        {(dataMatches ?? []).map((e) => (
+          <MatchCard
+            mandante={e.mandante.equipe.nome}
+            visistante={e.visitante.equipe.nome}
+            mandantePts={e.mandante.pontuacao}
+            visitantePts={e.visitante.pontuacao}
+            horario={e.dataComeco}
+            mandantePtsSet={e.mandante.pontosNosSets}
+            visitantePtsSet={e.visitante.pontosNosSets}
+            status={e.status}
+            onClick={() => onOpenCreateMatch()}
+          />
+        ))}
       </Grid>
       {(isOpen || isOpenEdit) && renderModal()}
+      {isOpenCreateMatch && (
+        <CreateMatchModal
+          isOpen={isOpenCreateMatch}
+          onClose={onCloseCreateMatch}
+        />
+      )}
     </Box>
   );
 }
