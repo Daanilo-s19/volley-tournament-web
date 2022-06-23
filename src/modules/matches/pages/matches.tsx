@@ -73,6 +73,7 @@ export function MatchesPage() {
     onOpenEdit,
     onCloseEdit,
 
+    leagueID,
     onSubmit,
     setLeagueID,
     round,
@@ -249,6 +250,7 @@ export function MatchesPage() {
       <Grid gridTemplateColumns="1fr 1fr" gridAutoRows="1fr" gridGap="32px">
         {(dataMatches ?? []).map((e) => (
           <MatchCard
+            key={e.id}
             mandante={e.mandante.equipe.nome}
             visistante={e.visitante.equipe.nome}
             mandantePts={e.mandante.pontuacao}
@@ -271,15 +273,17 @@ export function MatchesPage() {
           Gerenciamento de Arbitro e Delegado
         </Heading>
 
-        <Tooltip label="Adicionar">
-          <IconButton
-            colorScheme="blue"
-            aria-label="adicionar"
-            icon={<AddIcon />}
-            onClick={onOpen ?? onOpenEdit}
-            isRound
-          />
-        </Tooltip>
+        {Boolean(leagueID) && (
+          <Tooltip label="Adicionar">
+            <IconButton
+              colorScheme="blue"
+              aria-label="adicionar"
+              icon={<AddIcon />}
+              onClick={onOpen ?? onOpenEdit}
+              isRound
+            />
+          </Tooltip>
+        )}
       </Flex>
       <Heading as="h4" size="md" margin="48px 0 24px">
         Árbitros

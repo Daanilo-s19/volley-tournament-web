@@ -50,16 +50,10 @@ export default function SelectLeague({ onChange }: Props) {
 
   const renderLeagues = () => {
     return (
-      <Select
-        onChange={(e) => onLeagueChange(e.target.value)}
-      >
-        <option value="oi">
-          Selecionar Liga
-        </option>
+      <Select onChange={(e) => onLeagueChange(e.target.value)}>
+        <option value="oi">Selecionar Liga</option>
         {leagues?.map((e) => (
-          <option value={e.id}>
-            {e.nome ?? "-"}
-          </option>
+          <option value={e.id}>{e.nome ?? "-"}</option>
         ))}
       </Select>
     );
