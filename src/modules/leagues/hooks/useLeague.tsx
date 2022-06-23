@@ -110,5 +110,6 @@ export default function useLeague(onStart: boolean = true) {
     classificationError,
 
     setLeagueID,
+    leagueId,
   };
 }
