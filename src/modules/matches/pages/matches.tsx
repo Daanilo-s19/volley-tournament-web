@@ -620,7 +620,6 @@ export function MatchesPage() {
       </Grid>
       {(isOpen || isOpenEdit) && renderModal()}
       {(isOpenCreateResult || isOpenEditResult) && renderModalResult()}
-      {/*
       {isOpenCreateMatch && (
         <CreateMatchModal
           arbitros={referees}
@@ -634,7 +633,6 @@ export function MatchesPage() {
           loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
         />
       )}
-      */}
     </Box>
   );
 }
