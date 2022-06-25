@@ -34,63 +34,63 @@ export interface InitLeagueInput {
   intervaloDeDiasUteisEntreTurnos: number;
 }
 
-export interface LeagueClassificationOutput{
-  idEquipe: string,
-  setsGanhos: number,
-  setsPerdidos: number,
-  setsDisputados: number,
-  partidasGanhas: number,
-  partidasPerdidas: number,
-  partidasDisputadas: number,
-  pontuacao: number,
-  pontosAverage: number,
-  setsAverage: number,
+export interface LeagueClassificationOutput {
+  idEquipe: string;
+  setsGanhos: number;
+  setsPerdidos: number;
+  setsDisputados: number;
+  partidasGanhas: number;
+  partidasPerdidas: number;
+  partidasDisputadas: number;
+  pontuacao: number;
+  pontosAverage: number;
+  setsAverage: number;
   equipe: {
-    id: string,
-    nome: string,
-    urlBrasao: string,
-    apta: boolean,
-    descricaoAptidao: string[],
-    cidade: string,
-    estado: string,
-    idLiga: string,
-    idGinasio: string,
+    id: string;
+    nome: string;
+    urlBrasao: string;
+    apta: boolean;
+    descricaoAptidao: string[];
+    cidade: string;
+    estado: string;
+    idLiga: string;
+    idGinasio: string;
     tecnico: {
-      id: string,
-      documentoCref: string,
-      idEquipe: string,
-      nome: string,
-      documento: string,
-      genero: "feminino" | "masculino",
-      idade: number,
-      documentoCbv: string
-    },
-    quantidadeAtletas: number,
-    quantidadeAuxiliares: number,
+      id: string;
+      documentoCref: string;
+      idEquipe: string;
+      nome: string;
+      documento: string;
+      genero: "feminino" | "masculino";
+      idade: number;
+      documentoCbv: string;
+    };
+    quantidadeAtletas: number;
+    quantidadeAuxiliares: number;
     atletas: [
       {
-        id: string,
-        numero: number,
-        idEquipe: string,
-        nome: string,
-        documento: string,
-        genero: "feminino" | "masculino",
-        idade: number,
-        documentoCbv: string
+        id: string;
+        numero: number;
+        idEquipe: string;
+        nome: string;
+        documento: string;
+        genero: "feminino" | "masculino";
+        idade: number;
+        documentoCbv: string;
       }
-    ],
+    ];
     auxiliares: [
       {
-        id: string,
-        idEquipe: string,
-        documentoCref: string,
-        tipoAuxiliar: string,
-        nome: string,
-        documento: string,
-        genero: "feminino" | "masculino",
-        idade: number,
-        documentoCbv: string
+        id: string;
+        idEquipe: string;
+        documentoCref: string;
+        tipoAuxiliar: string;
+        nome: string;
+        documento: string;
+        genero: "feminino" | "masculino";
+        idade: number;
+        documentoCbv: string;
       }
-    ]
-  }
+    ];
+  };
 }

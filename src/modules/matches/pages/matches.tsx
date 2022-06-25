@@ -44,6 +44,7 @@ import useMatches from "../hooks/useMatches";
 import SelectLeague from "../../leagues/components/selectLeague";
 import dayjs from "dayjs";
 import MatchCard from "../components/matchCard";
+import CreateMatchModal from "../components/createMatch";
 
 export function MatchesPage() {
   const {
@@ -89,6 +90,19 @@ export function MatchesPage() {
     setLeagueID,
     round,
     selectRound,
+
+    isOpenCreateMatch,
+    onOpenCreateMatch,
+    onCloseCreateMatch,
+
+    dataMatches,
+    openMatch,
+    match,
+
+    dataHomePlayers,
+    dataVisitingPlayers,
+    isLoadingHomePlayers,
+    isLoadingVisitingPlayers,
   } = useMatches();
 
   const renderModal = () => {
@@ -450,6 +464,57 @@ export function MatchesPage() {
     <Box>
       <SelectLeague onStart={false} onChange={setLeagueID} />
 
+      <Heading as="h3" size="lg" margin="48px 0 24px">
+        Gerenciamento de Partida
+      </Heading>
+      <Flex
+        flexDirection="row"
+        alignContent="center"
+        justifyContent="space-between"
+      >
+        <Text fontSize="lg" marginBottom="24px">
+          Acompanhe e gerencie as partidas da liga.
+        </Text>
+      </Flex>
+      <FormControl>
+        <FormLabel marginTop="12px">Selecionar rodada</FormLabel>
+        <Select
+          placeholder="rodada"
+          onChange={(e) => selectRound(e.target.value)}
+        >
+          {Array.from<Number>(new Array(30)).map((_, index) => (
+            <option value={index + 1}>{index + 1}</option>
+          ))}
+
+          {/* <option value="feminino">quartas de finais</option> */}
+        </Select>
+      </FormControl>
+      <Box background="gray" padding="16px">
+        <Flex
+          flexDirection="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text fontSize="medium" fontWeight="bold" color="white">
+            Rodada {round}
+          </Text>
+        </Flex>
+      </Box>
+      <Grid gridTemplateColumns="1fr 1fr" gridAutoRows="1fr" gridGap="32px">
+        {(dataMatches ?? []).map((e) => (
+          <MatchCard
+            mandante={e.mandante.equipe.nome}
+            visistante={e.visitante.equipe.nome}
+            mandantePts={e.mandante.pontuacao}
+            visitantePts={e.visitante.pontuacao}
+            horario={e.dataComeco}
+            mandantePtsSet={e.mandante.pontosNosSets}
+            visitantePtsSet={e.visitante.pontosNosSets}
+            status={e.status}
+            onClick={() => openMatch(e)}
+          />
+        ))}
+      </Grid>
       <Flex
         flexDirection="row"
         alignContent="center"
@@ -555,6 +620,19 @@ export function MatchesPage() {
       </Grid>
       {(isOpen || isOpenEdit) && renderModal()}
       {(isOpenCreateResult || isOpenEditResult) && renderModalResult()}
+      {isOpenCreateMatch && (
+        <CreateMatchModal
+          arbitros={referees}
+          delegados={delegates}
+          isOpen={isOpenCreateMatch}
+          onClose={onCloseCreateMatch}
+          mandante={match.mandante.equipe.nome}
+          visitante={match.visitante.equipe.nome}
+          homePlayer={dataHomePlayers}
+          visitingPlayer={dataVisitingPlayers}
+          loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
+        />
+      )}
     </Box>
   );
 }

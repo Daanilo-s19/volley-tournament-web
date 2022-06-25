@@ -1,10 +1,12 @@
 import { useDisclosure, useToast } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import useLeague from "../../leagues/hooks/useLeague";
+import PlayerService from "../../overview/services/playerService";
+import { PlayerOutput } from "../../overview/types";
 import MatchesService from "../services/matchesServices";
-import { Person, PersonOutput } from "../types";
+import { MatchOutput, Person, PersonOutput } from "../types";
 
 type PersonType = "arbitro" | "delegado";
 
@@ -22,7 +24,16 @@ export default function useMatches() {
     fetchMatchPerRound,
   } = MatchesService();
 
+  const { fetchPlayers } = PlayerService();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenCreateMatch,
+    onOpen: onOpenCreateMatch,
+    onClose: onCloseCreateMatch,
+  } = useDisclosure();
+
+  const [match, setMatch] = useState<MatchOutput>();
 
   const [leagueID, setLeagueID] = useState<string>();
   const [delegates, setDelegates] = useState<PersonOutput[]>();
@@ -81,6 +92,44 @@ export default function useMatches() {
       isClosable: true,
     });
   };
+
+  const openMatch = (value: MatchOutput) => {
+    setMatch(value);
+    onOpenCreateMatch();
+
+    refetchHomePlayers();
+    refetchVisitingPlayers();
+  };
+
+  const {
+    data: dataHomePlayers,
+    refetch: refetchHomePlayers,
+    isLoading: isLoadingHomePlayers,
+    isError: isErrorHomePlayers,
+  } = useQuery<PlayerOutput[]>(
+    ["fetchHomePlayers", match?.mandante?.idEquipe ?? ""],
+    () => fetchPlayers(match.mandante.idEquipe),
+    {
+      onSuccess: (d) => toastSuccess(),
+      onError: (d: any) => toastError(d.response.data.message),
+      enabled: match?.mandante?.idEquipe != null,
+    }
+  );
+
+  const {
+    data: dataVisitingPlayers,
+    refetch: refetchVisitingPlayers,
+    isLoading: isLoadingVisitingPlayers,
+    isError: isErrorVisitingPlayers,
+  } = useQuery<PlayerOutput[]>(
+    ["fetchVisitingPlayers", match?.visitante?.idEquipe ?? ""],
+    () => fetchPlayers(match.visitante.idEquipe),
+    {
+      onSuccess: (d) => toastSuccess(),
+      onError: (d: any) => toastError(d.response.data.message),
+      enabled: match?.visitante?.idEquipe != null,
+    }
+  );
 
   const {
     refetch: refetchReferee,
@@ -142,14 +191,15 @@ export default function useMatches() {
   };
 
   const {
+    data: dataMatches,
     refetch: refetchMatchRound,
     isLoading: isLoadingMatchRound,
     isError: isErrorMatchRound,
-  } = useQuery<any[]>(
+  } = useQuery<MatchOutput[]>(
     ["fetchMatchPerRound", leagueID, round],
     () => fetchMatchPerRound(leagueID, round),
     {
-      onSuccess: (e) => console.log(e),
+      onSuccess: (d) => toastSuccess(),
       onError: (d: any) => toastError(d.response.data.message),
       enabled: leagueID != null,
     }
@@ -205,5 +255,19 @@ export default function useMatches() {
     setLeagueID,
     round,
     selectRound,
+
+    isOpenCreateMatch,
+    onOpenCreateMatch,
+    onCloseCreateMatch,
+
+    dataMatches,
+
+    openMatch,
+    match,
+
+    dataHomePlayers,
+    dataVisitingPlayers,
+    isLoadingHomePlayers,
+    isLoadingVisitingPlayers,
   };
 }
