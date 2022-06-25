@@ -78,6 +78,19 @@ export function MatchesPage() {
     round,
     selectRound,
 
+    registerResult,
+    handleSubmitResult,
+    resetResult,
+    errorsResult,
+
+    isOpenCreateResult,
+    onOpenCreateResult,
+    onCloseCreateResult,
+
+    isOpenEditResult,
+    onOpenEditResult,
+    onCloseEditResult,
+
     isOpenCreateMatch,
     onOpenCreateMatch,
     onCloseCreateMatch,
@@ -206,6 +219,247 @@ export function MatchesPage() {
     );
   };
 
+  const renderModalResult = () => {
+    return (
+      <Modal isOpen={isOpenCreateResult || isOpenEditResult} onClose={onCloseCreateResult || onCloseEditResult}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>{isOpenCreateResult ? "Adicionar" : "Editar"}</ModalHeader>
+          <ModalCloseButton />
+          <form onSubmit={handleSubmitResult(onSubmit)}>
+            <ModalBody pb={6}>
+              <FormControl>
+                <FormLabel>Primeiro Time</FormLabel>
+                <Input
+                  placeholder="Nome Time "
+                  {...registerResult("nomeTime1", { required: true })}
+                />
+                {errorsResult.nomeTime1 && (
+                  <Text color="red" fontSize="10">
+                    Insira o nome do Primeiro Time
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel>Segundo Time</FormLabel>
+                <Input
+                  placeholder="Nome Time "
+                  {...registerResult("nomeTime2", { required: true })}
+                />
+                {errorsResult.nomeTime2 && (
+                  <Text color="red" fontSize="10">
+                    Insira o nome do Segundo Time
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Data do Jogo</FormLabel>
+                <Input
+                  type="date"
+                  {...registerResult("dataJogo", {
+                    required: true,
+                    validate: (date) => {
+                      return dayjs(date).diff(dayjs(), "d") < 0; // Testar essa condição
+                    },
+                  })}
+                />
+                {errorsResult.dataNascimento && (
+                  <Text color="red" fontSize="10">
+                    Insira a data do jogo
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Primeiro Set Time 1</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Primeiro Set Time 1"
+                  {...registerResult("primeiroSetT1", { required: true })}
+                />
+                {errorsResult.primeiroSetT1 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do primeiro Set do Time 1
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Primeiro Set Time 2</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Primeiro Set Time 2"
+                  {...registerResult("primeiroSetT2", { required: true })}
+                />
+                {errorsResult.primeiroSetT2 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do primeiro Set do Time 2
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Segundo Set Time 1</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Segundo Set Time 1"
+                  {...registerResult("segundoSetT1", { required: true })}
+                />
+                {errorsResult.segundoSetT1 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do segundo Set do Time 1
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Segundo Set Time 2</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Segundo Set Time 2"
+                  {...registerResult("segundoSetT2", { required: true })}
+                />
+                {errorsResult.segundoSetT2 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do segundo Set do Time 2
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Terceiro Set Time 1</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Terceiro Set Time 1"
+                  {...registerResult("terceiroSetT1", { required: true })}
+                />
+                {errorsResult.terceiroSetT1 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do terceiro Set do Time 1
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Terceiro Set Time 2</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Terceiro Set Time 2"
+                  {...registerResult("terceiroSetT2", { required: true })}
+                />
+                {errorsResult.terceiroSetT2 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do terceiro Set do Time 2
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Quarto Set Time 1</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Quarto Set Time 1"
+                  {...registerResult("quartoSetT1", { required: true })}
+                />
+                {errorsResult.quartoSetT1 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do quarto Set do Time 1
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Quarto Set Time 2</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Quarto Set Time 2"
+                  {...registerResult("quartoSetT2", { required: true })}
+                />
+                {errorsResult.quartoSetT2 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do quarto Set do Time 2
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Quinto Set Time 1</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Quinto Set Time 1"
+                  {...registerResult("quintoSetT1", { required: true })}
+                />
+                {errorsResult.quintoSetT1 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do quinto Set do Time 1
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Quinto Set Time 2</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  placeholder="Quinto Set Time 2"
+                  {...registerResult("quintoSetT2", { required: true })}
+                />
+                {errorsResult.quintoSetT2 && (
+                  <Text color="red" fontSize="10">
+                    Insira o Resultado do quinto Set do Time 2
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Sets Vencidos Time 1</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  max="5"
+                  placeholder="Sets Vencidos Time 1"
+                  {...registerResult("setsVencidosT1", { required: true })}
+                />
+                {errorsResult.setsVencidosT1 && (
+                  <Text color="red" fontSize="10">
+                    Insira a Quantidade de Sets vencidos pelo Time 1
+                  </Text>
+                )}
+              </FormControl>
+              <FormControl>
+                <FormLabel marginTop="12px">Sets Vencidos Time 2</FormLabel>
+                <Input
+                  type="number"
+                  min="0"
+                  max="5"
+                  placeholder="Sets Vencidos Time 2"
+                  {...registerResult("setsVencidosT2", { required: true })}
+                />
+                {errorsResult.setsVencidosT2 && (
+                  <Text color="red" fontSize="10">
+                    Insira a Quantidade de Sets vencidos pelo Time 2
+                  </Text>
+                )}
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button colorScheme="blue" type="submit" mr={3}>
+                {isOpenCreateResult ? "Cadastrar Resultado" : "Editar Resultado"}
+              </Button>
+              <Button
+                onClick={() => {
+                  onClose();
+                  onCloseEdit();
+                  // setCurrentPlayer(null);
+                }}
+              >
+                Fechar
+              </Button>
+            </ModalFooter>
+          </form>
+        </ModalContent>
+      </Modal>
+    );
+  };
+
   return (
     <Box>
       <SelectLeague onStart={false} onChange={setLeagueID} />
@@ -221,6 +475,15 @@ export function MatchesPage() {
         <Text fontSize="lg" marginBottom="24px">
           Acompanhe e gerencie as partidas da liga.
         </Text>
+        <Tooltip label="Adicionar Resultado">
+          <IconButton
+            colorScheme="blue"
+            aria-label="adicionar Resultado"
+            icon={<AddIcon />}
+            onClick={onOpenCreateResult ?? onOpenEditResult}
+            isRound
+          />
+        </Tooltip>
       </Flex>
       <FormControl>
         <FormLabel marginTop="12px">Selecionar rodada</FormLabel>
@@ -303,6 +566,7 @@ export function MatchesPage() {
         onDelete={(e) => console.log(e)}
       />
       {(isOpen || isOpenEdit) && renderModal()}
+      {(isOpenCreateResult || isOpenEditResult) && renderModalResult()}
       {isOpenCreateMatch && (
         <CreateMatchModal
           arbitros={referees}

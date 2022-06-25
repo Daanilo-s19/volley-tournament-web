@@ -47,11 +47,30 @@ export default function useMatches() {
   } = useDisclosure();
 
   const {
+    isOpen: isOpenCreateResult,
+    onOpen: onOpenCreateResult,
+    onClose: onCloseCreateResult,
+  } = useDisclosure();
+
+  const {
+    isOpen: isOpenEditResult,
+    onOpen: onOpenEditResult,
+    onClose: onCloseEditResult,
+  } = useDisclosure();
+
+  const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<FormType>();
+
+  const {
+    register: registerResult,
+    handleSubmit: handleSubmitResult,
+    reset: resetResult,
+    formState: { errors: errorsResult },
+  } = useForm();
 
   const toastSuccess = () => {
     toast({
@@ -208,6 +227,11 @@ export default function useMatches() {
     reset,
     errors,
 
+    registerResult,
+    handleSubmitResult,
+    resetResult,
+    errorsResult,
+
     refetchReferee,
     refetchDelegates,
 
@@ -218,6 +242,14 @@ export default function useMatches() {
     isOpenEdit,
     onOpenEdit,
     onCloseEdit,
+
+    isOpenCreateResult,
+    onOpenCreateResult,
+    onCloseCreateResult,
+
+    isOpenEditResult,
+    onOpenEditResult,
+    onCloseEditResult,
 
     onSubmit,
     setLeagueID,
