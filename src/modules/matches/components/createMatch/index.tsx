@@ -36,7 +36,7 @@ export interface DataSelect {
 interface Props {
   isOpen: boolean;
   onClose(): void;
-  onFinish(data: DataSelect[]): void;
+  onFinish(data: DataSelect[], desistencia: string): void;
   homePlayer: PlayerOutput[];
   visitingPlayer: PlayerOutput[];
 
@@ -73,6 +73,7 @@ export default function CreateMatchModal({
   };
 
   const [selectedPlayer, setSelectedPlayer] = useState<DataSelect[]>([]);
+  const [checkedItems, setCheckedItems] = React.useState<string>("");
 
   const addSelectedPlayer = (
     id: string,
@@ -176,14 +177,28 @@ export default function CreateMatchModal({
         <Box>
           <FormControl>
             <FormLabel marginTop="28px">Mandante:{mandante}</FormLabel>
-            <Checkbox>Desistência</Checkbox>
+            <Checkbox
+              isChecked={checkedItems === "mandante"}
+              onChange={(e) =>
+                setCheckedItems(checkedItems !== "mandante" ? "mandante" : "")
+              }
+            >
+              Desistência
+            </Checkbox>
           </FormControl>
           {renderPlayerByPosition(renderHomePlayer, "mandante")}
         </Box>
         <Box>
           <FormControl>
             <FormLabel marginTop="28px">Visitante: {visitante}</FormLabel>
-            <Checkbox>Desistência</Checkbox>
+            <Checkbox
+              isChecked={checkedItems === "visitante"}
+              onChange={(e) =>
+                setCheckedItems(checkedItems !== "visitante" ? "visitante" : "")
+              }
+            >
+              Desistência
+            </Checkbox>
           </FormControl>
           {renderPlayerByPosition(renderVisitingPlayer, "visitante")}
         </Box>
@@ -281,7 +296,7 @@ export default function CreateMatchModal({
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={() => onFinish(selectedPlayer)}
+            onClick={() => onFinish(selectedPlayer, checkedItems)}
           >
             Finalizar
           </Button>

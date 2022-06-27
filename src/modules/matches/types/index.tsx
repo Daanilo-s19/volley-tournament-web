@@ -103,5 +103,5 @@ export interface RegisterMatchInput {
   arbitros: Referees[];
   atletasMandante: player[];
   atletasVisitante: player[];
-  desistente: WoType;
+  desistente: string;
 }

@@ -93,7 +93,10 @@ export default function useMatches() {
     refetchVisitingPlayers();
   };
 
-  const onFinishRegisterMatch = (dataSelect: DataSelect[]) => {
+  const onFinishRegisterMatch = (
+    dataSelect: DataSelect[],
+    desistencia: string
+  ) => {
     if (dataSelect.length < 26) {
       toastError("Selecione todos os participantes da partida.");
       return;
@@ -131,7 +134,7 @@ export default function useMatches() {
       arbitros: arbitros,
       atletasMandante: atletaMandante,
       atletasVisitante: atletaVisistante,
-      desistente: null,
+      desistente: desistencia !== "" ? desistencia : null,
     };
 
     registerMatchMutate(input);

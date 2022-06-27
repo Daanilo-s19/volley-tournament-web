@@ -316,7 +316,9 @@ export function MatchesPage() {
           homePlayer={dataHomePlayers}
           visitingPlayer={dataVisitingPlayers}
           loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
-          onFinish={(dataSelect) => onFinishRegisterMatch(dataSelect)}
+          onFinish={(dataSelect, desistencia) =>
+            onFinishRegisterMatch(dataSelect, desistencia)
+          }
         />
       )}
     </Box>
