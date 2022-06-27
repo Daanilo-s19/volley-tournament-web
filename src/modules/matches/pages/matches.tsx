@@ -90,6 +90,7 @@ export function MatchesPage() {
     dataVisitingPlayers,
     isLoadingHomePlayers,
     isLoadingVisitingPlayers,
+    onFinishRegisterMatch,
   } = useMatches();
 
   const renderModal = () => {
@@ -228,11 +229,12 @@ export function MatchesPage() {
           placeholder="rodada"
           onChange={(e) => selectRound(e.target.value)}
         >
-          {Array.from<Number>(new Array(30)).map((_, index) => (
+          {Array.from<Number>(new Array(22)).map((_, index) => (
             <option value={index + 1}>{index + 1}</option>
           ))}
-
-          {/* <option value="feminino">quartas de finais</option> */}
+          <option value="quartas">quartas de final</option>
+          <option value="semis">semi final</option>
+          <option value="final">final</option>
         </Select>
       </FormControl>
       <Box background="gray" padding="16px">
@@ -253,7 +255,7 @@ export function MatchesPage() {
             visistante={e.visitante.equipe.nome}
             mandantePts={e.mandante.pontuacao}
             visitantePts={e.visitante.pontuacao}
-            horario={e.dataComeco}
+            horario={e.dataAtualizacao}
             mandantePtsSet={e.mandante.pontosNosSets}
             visitantePtsSet={e.visitante.pontosNosSets}
             status={e.status}
@@ -314,6 +316,9 @@ export function MatchesPage() {
           homePlayer={dataHomePlayers}
           visitingPlayer={dataVisitingPlayers}
           loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
+          onFinish={(dataSelect, desistencia) =>
+            onFinishRegisterMatch(dataSelect, desistencia)
+          }
         />
       )}
     </Box>

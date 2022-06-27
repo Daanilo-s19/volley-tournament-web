@@ -5,8 +5,16 @@ import { useMutation, useQuery } from "react-query";
 import useLeague from "../../leagues/hooks/useLeague";
 import PlayerService from "../../overview/services/playerService";
 import { PlayerOutput } from "../../overview/types";
+import { DataSelect } from "../components/createMatch";
 import MatchesService from "../services/matchesServices";
-import { MatchOutput, Person, PersonOutput } from "../types";
+import {
+  MatchOutput,
+  Person,
+  PersonOutput,
+  player,
+  Referees,
+  RegisterMatchInput,
+} from "../types";
 
 type PersonType = "arbitro" | "delegado";
 
@@ -22,6 +30,7 @@ export default function useMatches() {
     createReferee,
     fetchDelegate,
     fetchMatchPerRound,
+    registerMatchParticipants,
   } = MatchesService();
 
   const { fetchPlayers } = PlayerService();
@@ -38,7 +47,9 @@ export default function useMatches() {
   const [leagueID, setLeagueID] = useState<string>();
   const [delegates, setDelegates] = useState<PersonOutput[]>();
   const [referees, setreferees] = useState<PersonOutput[]>();
-  const [round, setRound] = useState<number>(1);
+  const [currentRegisterMatch, setCurrentRegisterMatch] =
+    useState<RegisterMatchInput>();
+  const [round, setRound] = useState<number | string>(1);
 
   const {
     isOpen: isOpenEdit,
@@ -82,20 +93,77 @@ export default function useMatches() {
     refetchVisitingPlayers();
   };
 
+  const onFinishRegisterMatch = (
+    dataSelect: DataSelect[],
+    desistencia: string
+  ) => {
+    if (dataSelect.length < 26) {
+      toastError("Selecione todos os participantes da partida.");
+      return;
+    }
+    const arbitros: Referees[] = [];
+    const atletaMandante: player[] = [];
+    const atletaVisistante: player[] = [];
+
+    dataSelect.forEach((e) => {
+      if (e.team === "arbitro") {
+        arbitros.push({ idArbitro: e.id, tipo: e.position });
+        return;
+      }
+
+      if (e.team === "mandante") {
+        atletaMandante.push({
+          idAtleta: e.id,
+          posicao: e.position.includes("reserva") ? "central" : e.position,
+        });
+        return;
+      }
+
+      if (e.team === "visitante") {
+        atletaVisistante.push({
+          idAtleta: e.id,
+          posicao: e.position.includes("reserva") ? "central" : e.position,
+        });
+        return;
+      }
+    });
+
+    const input: RegisterMatchInput = {
+      idLiga: match.id,
+      idDelegado: dataSelect.find((e) => e.team === "delegado").id,
+      arbitros: arbitros,
+      atletasMandante: atletaMandante,
+      atletasVisitante: atletaVisistante,
+      desistente: desistencia !== "" ? desistencia : null,
+    };
+
+    registerMatchMutate(input);
+  };
+
   const {
     data: dataHomePlayers,
     refetch: refetchHomePlayers,
     isLoading: isLoadingHomePlayers,
-    isError: isErrorHomePlayers,
   } = useQuery<PlayerOutput[]>(
     ["fetchHomePlayers", match?.mandante?.idEquipe ?? ""],
     () => fetchPlayers(match.mandante.idEquipe),
     {
       onSuccess: (d) => toastSuccess(),
+
       onError: (d: any) => toastError(d.response.data.message),
       enabled: match?.mandante?.idEquipe != null,
     }
   );
+
+  const { mutate: registerMatchMutate, isLoading: isLoadingRegisterMatch } =
+    useMutation(registerMatchParticipants, {
+      onSuccess: (d) => {
+        toastSuccess();
+        refetchMatchRound();
+        onCloseCreateMatch();
+      },
+      onError: (d: any) => toastError(d.response.data.message),
+    });
 
   const {
     data: dataVisitingPlayers,
@@ -187,7 +255,10 @@ export default function useMatches() {
   );
 
   const selectRound = (round: string) => {
-    setRound(Number.parseInt(round));
+    const value = ["quartas", "semis", "final"].includes(round)
+      ? round
+      : Number.parseInt(round);
+    setRound(value);
     refetchMatchRound();
   };
 
@@ -237,5 +308,6 @@ export default function useMatches() {
     dataVisitingPlayers,
     isLoadingHomePlayers,
     isLoadingVisitingPlayers,
+    onFinishRegisterMatch,
   };
 }

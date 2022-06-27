@@ -105,9 +105,9 @@ export function OverviewPage() {
                   {...registerLeague("inicializar", { required: true })}
                 >
                   <option value="inicializa">Classificação</option>
-                  {/* <option value="inicializa-quartas">quartas de final</option>
+                  <option value="inicializa-quartas">quartas de final</option>
                   <option value="inicializa-semis">Semi final</option>
-                  <option value="inicializa-final">Final</option> */}
+                  <option value="inicializa-final">Final</option>
                 </Select>
                 {errorsLeague.inicializar && (
                   <Text color="red" fontSize="10">

@@ -1,4 +1,5 @@
 import { Box, Flex, Spacer, Text } from "@chakra-ui/layout";
+import dayjs from "dayjs";
 import React from "react";
 import { matchType } from "../../types";
 
@@ -47,7 +48,11 @@ export default function MatchCard({
         {/* <AspectRatio maxW="40px" ratio={4 / 3} /> */}
         <Text fontSize="medium">{mandante}</Text>
         <Spacer />
-        <Text fontSize="medium">{mandantePtsSet.map((e) => e)}</Text>
+        {mandantePtsSet.map((e) => (
+          <Text fontSize="medium" marginRight="8px">
+            {e}
+          </Text>
+        ))}
 
         <Box marginLeft="8px" paddingLeft="8px" borderLeft="1px solid grey">
           <Text fontSize="medium">{mandantePts}</Text>
@@ -57,7 +62,11 @@ export default function MatchCard({
         {/* <AspectRatio maxW="40px" ratio={4 / 3} /> */}
         <Text fontSize="medium"> {visistante}</Text>
         <Spacer />
-        <Text fontSize="medium">{visitantePtsSet}</Text>
+        {visitantePtsSet.map((e) => (
+          <Text fontSize="medium" marginRight="8px">
+            {e}
+          </Text>
+        ))}
 
         <Box marginLeft="8px" paddingLeft="8px" borderLeft="1px solid grey">
           <Text fontSize="medium">{visitantePts}</Text>
@@ -65,7 +74,10 @@ export default function MatchCard({
       </Flex>
       <Flex marginTop="16px">
         <Spacer />
-        <Text fontSize="medium">{horario}</Text>
+        <Text fontSize="medium">
+          Atualizado em:{" "}
+          {dayjs(horario).locale("pt").format("dddd. DD/MM/YYYY")}
+        </Text>
       </Flex>
     </Box>
   );
