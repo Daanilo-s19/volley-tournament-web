@@ -45,6 +45,7 @@ import SelectLeague from "../../leagues/components/selectLeague";
 import dayjs from "dayjs";
 import MatchCard from "../components/matchCard";
 import CreateMatchModal from "../components/createMatch";
+import SaveResultMatch from "../components/saveResultMatch";
 
 export function MatchesPage() {
   const {
@@ -81,6 +82,10 @@ export function MatchesPage() {
     isOpenCreateMatch,
     onOpenCreateMatch,
     onCloseCreateMatch,
+
+    isOpenSaveResult,
+    onOpenSaveResult,
+    onCloseSaveResult,
 
     dataMatches,
     openMatch,
@@ -317,6 +322,16 @@ export function MatchesPage() {
           visitingPlayer={dataVisitingPlayers}
           loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
           onFinish={(dataSelect) => onFinishRegisterMatch(dataSelect)}
+        />
+      )}
+      {isOpenSaveResult && (
+        <SaveResultMatch
+          mandante={match.mandante.equipe.nome}
+          visitante={match.visitante.equipe.nome}
+          loading={false}
+          onFinish={() => {}}
+          isOpen={isOpenSaveResult}
+          onClose={onCloseSaveResult}
         />
       )}
     </Box>

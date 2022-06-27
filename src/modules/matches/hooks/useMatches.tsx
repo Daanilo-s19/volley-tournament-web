@@ -42,6 +42,12 @@ export default function useMatches() {
     onClose: onCloseCreateMatch,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenSaveResult,
+    onOpen: onOpenSaveResult,
+    onClose: onCloseSaveResult,
+  } = useDisclosure();
+
   const [match, setMatch] = useState<MatchOutput>();
 
   const [leagueID, setLeagueID] = useState<string>();
@@ -87,10 +93,15 @@ export default function useMatches() {
 
   const openMatch = (value: MatchOutput) => {
     setMatch(value);
-    onOpenCreateMatch();
-
-    refetchHomePlayers();
-    refetchVisitingPlayers();
+    if (value.status === "agendada") {
+      onOpenCreateMatch();
+      refetchHomePlayers();
+      refetchVisitingPlayers();
+      return;
+    }
+    if (value.status === "participantes_cadastrados") {
+      onOpenSaveResult();
+    }
   };
 
   const onFinishRegisterMatch = (dataSelect: DataSelect[]) => {
@@ -295,6 +306,10 @@ export default function useMatches() {
     isOpenCreateMatch,
     onOpenCreateMatch,
     onCloseCreateMatch,
+
+    isOpenSaveResult,
+    onOpenSaveResult,
+    onCloseSaveResult,
 
     dataMatches,
 
