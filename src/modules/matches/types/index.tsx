@@ -85,3 +85,23 @@ export interface MatchOutput {
     quantidadeAtletasEscalados: number;
   };
 }
+
+type PositionType = "ponta" | "oposto" | "central" | "libero" | "levantador";
+type WoType = "mandante" | "visitante";
+
+export interface player {
+  idAtleta: string;
+  posicao: string;
+}
+export interface Referees {
+  idArbitro: string;
+  tipo: string;
+}
+export interface RegisterMatchInput {
+  idLiga: string;
+  idDelegado: string;
+  arbitros: Referees[];
+  atletasMandante: player[];
+  atletasVisitante: player[];
+  desistente: WoType;
+}

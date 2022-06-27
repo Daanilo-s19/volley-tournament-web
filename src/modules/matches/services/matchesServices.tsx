@@ -1,5 +1,10 @@
 import { ApiService } from "../../../services/service";
-import { PersonOutput, Person, MatchOutput } from "../types";
+import {
+  PersonOutput,
+  Person,
+  MatchOutput,
+  RegisterMatchInput,
+} from "../types";
 export default function MatchesService() {
   const fetchReferee = async (id: string) => {
     try {
@@ -51,6 +56,28 @@ export default function MatchesService() {
     }
   };
 
+  const registerMatchParticipants = async (
+    input: RegisterMatchInput
+  ): Promise<MatchOutput> => {
+    console.log("RegisterMatchInput", input);
+
+    try {
+      const response = await ApiService.post(
+        `/partida/${input.idLiga}/cadastra-participantes`,
+        {
+          idDelegado: input.idDelegado,
+          arbitros: input.arbitros,
+          atletasMandante: input.atletasMandante,
+          atletasVisitante: input.atletasVisitante,
+          desistente: input.desistente,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     fetchReferee,
     fetchDelegate,
@@ -58,5 +85,6 @@ export default function MatchesService() {
     createReferee,
 
     fetchMatchPerRound,
+    registerMatchParticipants,
   };
 }

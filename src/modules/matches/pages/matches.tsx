@@ -90,6 +90,7 @@ export function MatchesPage() {
     dataVisitingPlayers,
     isLoadingHomePlayers,
     isLoadingVisitingPlayers,
+    onFinishRegisterMatch,
   } = useMatches();
 
   const renderModal = () => {
@@ -314,6 +315,7 @@ export function MatchesPage() {
           homePlayer={dataHomePlayers}
           visitingPlayer={dataVisitingPlayers}
           loading={isLoadingHomePlayers || isLoadingVisitingPlayers}
+          onFinish={(dataSelect) => onFinishRegisterMatch(dataSelect)}
         />
       )}
     </Box>

@@ -21,14 +21,22 @@ import {
   Select,
   Spinner,
   Tooltip,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
 import { PlayerOutput } from "../../../overview/types";
 import { PersonOutput } from "../../types";
 
+export type DataSelectType = "mandante" | "visitante" | "arbitro" | "delegado";
+export interface DataSelect {
+  position: string;
+  id: string;
+  team: DataSelectType;
+}
 interface Props {
   isOpen: boolean;
   onClose(): void;
+  onFinish(data: DataSelect[]): void;
   homePlayer: PlayerOutput[];
   visitingPlayer: PlayerOutput[];
 
@@ -49,20 +57,43 @@ export default function CreateMatchModal({
   loading = false,
   homePlayer,
   visitingPlayer,
+  onFinish,
 }: Props) {
-  const [selectedPlayer, setSelectedPlayer] = useState<
-    {
-      position: string;
-      id: string;
-      team: "mandante" | "visitante" | "arbitro";
-    }[]
-  >([]);
+  const toast = useToast();
+
+  const toastError = (message?: string) => {
+    toast({
+      title: "Ops.",
+      description: message ?? "houve um equivoco.",
+      status: "warning",
+      position: "bottom-right",
+      duration: 9000,
+      isClosable: true,
+    });
+  };
+
+  const [selectedPlayer, setSelectedPlayer] = useState<DataSelect[]>([]);
 
   const addSelectedPlayer = (
     id: string,
     position: string,
-    team: "mandante" | "visitante" | "arbitro"
+    team: DataSelectType
   ) => {
+    if (!id) {
+      const filter = selectedPlayer.filter(
+        (e) => e.id !== id && e.position !== position
+      );
+      setSelectedPlayer(filter);
+      return;
+    }
+
+    const search = selectedPlayer.find((selected) => selected.id === id);
+
+    if (search) {
+      toastError("O participante já foi selecionado!");
+      return;
+    }
+
     const containPlayer = selectedPlayer.find(
       (e) => e.position === position && e.team === team
     );
@@ -119,14 +150,13 @@ export default function CreateMatchModal({
       <FormControl>
         <FormLabel marginTop="28px">Selecionar Árbitros</FormLabel>
         <Grid gridTemplateColumns="repeat(4,1fr)" gap="20px">
-          {["principal", "(2)", "(3)", "(4)"].map((e) => (
+          {["principal", "secundário", "juiz_quadra"].map((e) => (
             <Select
               marginBottom="8px"
               placeholder={`Árbitro ${e}`}
               onChange={(select) =>
                 addSelectedPlayer(select.target.value, e, "arbitro")
               }
-              // {...register("personType", { required: true })}
             >
               {renderReferees}
             </Select>
@@ -176,15 +206,9 @@ export default function CreateMatchModal({
                 onChange={(select) =>
                   addSelectedPlayer(select.target.value, e, teamType)
                 }
-                // {...register("personType", { required: true })}
               >
                 {options}
               </Select>
-              {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
             </FormControl>
           )
         )}
@@ -204,8 +228,6 @@ export default function CreateMatchModal({
                   teamType
                 )
               }
-
-              // {...register("personType", { required: true })}
             >
               {options}
             </Select>
@@ -219,7 +241,7 @@ export default function CreateMatchModal({
     <Modal isOpen={isOpen} onClose={onClose} size="6xl">
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Criar partida</ModalHeader>
+        <ModalHeader>Selecionar Participantes</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {loading ? (
@@ -238,15 +260,16 @@ export default function CreateMatchModal({
                 <FormLabel marginTop="12px">Selecionar delegado</FormLabel>
                 <Select
                   placeholder="Selecionar delegado"
-                  // {...register("personType", { required: true })}
+                  onChange={(select) =>
+                    addSelectedPlayer(
+                      select.target.value,
+                      "delegado",
+                      "delegado"
+                    )
+                  }
                 >
                   {renderDelegate}
                 </Select>
-                {/* {errors.genero && (
-                <Text color="red" fontSize="10">
-                  Insira o tipo do cadastro
-                </Text>
-              )} */}
               </FormControl>
               {selectReferees()}
               {renderPlayersClub()}
@@ -255,7 +278,11 @@ export default function CreateMatchModal({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={() => onFinish(selectedPlayer)}
+          >
             Finalizar
           </Button>
           <Button variant="ghost" onClick={onClose}>
