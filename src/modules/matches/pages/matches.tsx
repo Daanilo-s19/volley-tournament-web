@@ -229,11 +229,12 @@ export function MatchesPage() {
           placeholder="rodada"
           onChange={(e) => selectRound(e.target.value)}
         >
-          {Array.from<Number>(new Array(30)).map((_, index) => (
+          {Array.from<Number>(new Array(22)).map((_, index) => (
             <option value={index + 1}>{index + 1}</option>
           ))}
-
-          {/* <option value="feminino">quartas de finais</option> */}
+          <option value="quartas">quartas de final</option>
+          <option value="semis">semi final</option>
+          <option value="final">final</option>
         </Select>
       </FormControl>
       <Box background="gray" padding="16px">

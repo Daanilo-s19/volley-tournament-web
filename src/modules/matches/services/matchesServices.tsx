@@ -44,7 +44,7 @@ export default function MatchesService() {
 
   const fetchMatchPerRound = async (
     idLiga: string,
-    round: number
+    round: number | string
   ): Promise<MatchOutput[]> => {
     try {
       const response = await ApiService.get(

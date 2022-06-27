@@ -49,7 +49,7 @@ export default function useMatches() {
   const [referees, setreferees] = useState<PersonOutput[]>();
   const [currentRegisterMatch, setCurrentRegisterMatch] =
     useState<RegisterMatchInput>();
-  const [round, setRound] = useState<number>(1);
+  const [round, setRound] = useState<number | string>(1);
 
   const {
     isOpen: isOpenEdit,
@@ -145,11 +145,8 @@ export default function useMatches() {
     ["fetchHomePlayers", match?.mandante?.idEquipe ?? ""],
     () => fetchPlayers(match.mandante.idEquipe),
     {
-      onSuccess: (d) => {
-        toastSuccess();
-        refetchMatchRound();
-        onCloseCreateMatch();
-      },
+      onSuccess: (d) => toastSuccess(),
+
       onError: (d: any) => toastError(d.response.data.message),
       enabled: match?.mandante?.idEquipe != null,
     }
@@ -157,7 +154,11 @@ export default function useMatches() {
 
   const { mutate: registerMatchMutate, isLoading: isLoadingRegisterMatch } =
     useMutation(registerMatchParticipants, {
-      onSuccess: (d) => toastSuccess(),
+      onSuccess: (d) => {
+        toastSuccess();
+        refetchMatchRound();
+        onCloseCreateMatch();
+      },
       onError: (d: any) => toastError(d.response.data.message),
     });
 
@@ -251,7 +252,10 @@ export default function useMatches() {
   );
 
   const selectRound = (round: string) => {
-    setRound(Number.parseInt(round));
+    const value = ["quartas", "semis", "final"].includes(round)
+      ? round
+      : Number.parseInt(round);
+    setRound(value);
     refetchMatchRound();
   };
 

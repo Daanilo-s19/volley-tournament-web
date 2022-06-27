@@ -64,10 +64,14 @@ export default function LeagueService() {
     }
   };
 
-  const getLeagueClassification = async (id?: string): Promise<LeagueClassificationOutput[]> =>{
+  const getLeagueClassification = async (
+    id?: string
+  ): Promise<LeagueClassificationOutput[]> => {
     try {
-      if(id){
-        const response = await ApiService.get('pontuacao', {params: {idLiga: id}});
+      if (id) {
+        const response = await ApiService.get("pontuacao", {
+          params: { idLiga: id },
+        });
         return response.data;
       }
     } catch (error) {
