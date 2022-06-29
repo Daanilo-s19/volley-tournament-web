@@ -13,21 +13,21 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
-import {StatisticsOutput} from "../../types"
+import {GeneralStatisticsOutput} from "../../types"
 
 interface Props {
-  items: Array<StatisticsOutput>;
+  items: Array<GeneralStatisticsOutput>;
   loading: boolean;
   error: boolean;
 }
 
-export default function StatisticsTable({
+export default function GeneralStatisticsTable({
   items,
   loading,
   error,
 }: Props) {
   const getHead = () =>
-    ["Nome", "Idade", "Votos", "Time"].map((e, key) => (
+    ["Nome", "Equipe", "Saques", "Recepções", "Bloqueios", "Aces", "Ataques",  "Levantamentos", "Assistências", "Pontos"].map((e, key) => (
       <Th key={key}>{e}</Th>
     ));
 
@@ -46,13 +46,31 @@ export default function StatisticsTable({
           <Text>{e.atleta.nome ?? ""}</Text>
         </Td>
         <Td>
-          <Text>{e.atleta.idade ?? ""}</Text>
+          <Text>{e.equipe.nome ?? ""}</Text>
         </Td>
         <Td>
-          <Text>{e.quantidadeVotos ?? ""}</Text>
+          <Text>{e.saques ?? ""}</Text>
         </Td>
         <Td>
-          <Text>{e?.equipe.nome ?? ""}</Text>
+          <Text>{e.recepcoes ?? ""}</Text>
+        </Td>
+        <Td>
+          <Text>{e.bloqueios ?? ""}</Text>
+        </Td>
+        <Td>
+          <Text>{e.aces ?? ""}</Text>
+        </Td>
+        <Td>
+          <Text>{e.ataques ?? ""}</Text>
+        </Td>
+        <Td>
+          <Text>{e.levantamentos ?? ""}</Text>
+        </Td>
+        <Td>
+          <Text>{e.assistencias ?? ""}</Text>
+        </Td>
+        <Td>
+          <Text>{e.pontos ?? ""}</Text>
         </Td>
       </Tr>
     ));

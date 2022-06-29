@@ -7,6 +7,7 @@ import { useStatistics } from "../hooks/useStatistics";
 import SelectLeague from "../../leagues/components/selectLeague";
 import useLeague from "../../leagues/hooks/useLeague";
 import StatisticsTable from "../components/statisticsTable";
+import GeneralStatisticsTable from "../components/generalStatisticsTable";
 
 
 export function StatisticsPage() {
@@ -24,7 +25,10 @@ export function StatisticsPage() {
     liberoError,
     opostoError,
     centralError,
-    galeraError
+    galeraError,
+    generalStatistics,
+    generalStatisticsError,
+    isLoadingGeneralStatistics
     } = useStatistics();
 
 
@@ -68,33 +72,37 @@ export function StatisticsPage() {
           name: libero[0].atleta.nome,
           votes: libero[0].quantidadeVotos,
           age: libero[0].atleta.idade,
-          team: libero[0].atleta.idEquipe,
+          team: libero[0].equipe.nome,
         }: undefined }/>
         
         <GenericPlayerCard title="Oposto" loading={isLoadingOposto} player={oposto?.length ? {
           name: oposto[0].atleta.nome,
           votes: oposto[0].quantidadeVotos,
           age: oposto[0].atleta.idade,
-          team: oposto[0].atleta.idEquipe,
+          team: oposto[0].equipe.nome,
         }: undefined}/>
 
         <GenericPlayerCard title="Central"  loading={isLoadingCentral} player={central?.length ? {
           name: central[0].atleta.nome,
           votes: central[0].quantidadeVotos,
           age: central[0].atleta.idade,
-          team: central[0].atleta.idEquipe,
+          team: central[0].equipe.nome,
         }: undefined}/>
 
         <GenericPlayerCard title="Craque da galera" loading={isLoadingGalera} player={galera?.length ? {
           name: galera[0].atleta.nome,
           votes: galera[0].quantidadeVotos,
           age: galera[0].atleta.idade,
-          team: galera[0].atleta.idEquipe,
+          team: galera[0].equipe.nome,
         }: undefined}/>
       </Flex>
       <Box mt="8">
         <Heading mb="4">Ranking 🏆</Heading>
         {statisticsTabs()}
+      </Box>
+      <Box mt="8">
+        <Heading mb="4">Estatísticas Gerais 📊</Heading>
+        <GeneralStatisticsTable items={generalStatistics} loading={isLoadingGeneralStatistics} error={!!generalStatisticsError}/>
       </Box>
     </Box>
   );

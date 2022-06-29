@@ -1,5 +1,5 @@
 import { ApiService } from "../../../services/service";
-import { StatisticsOutput } from "../types";
+import { GeneralStatisticsOutput, StatisticsOutput } from "../types";
 
 export function StatisticsService() {
   const fetchLibero = async (id: string): Promise<StatisticsOutput[]> => {
@@ -38,10 +38,20 @@ export function StatisticsService() {
     }
   }
 
+  const fetchGeneralStatistics = async (id: string) => {
+    try {
+      const response = await ApiService.get<GeneralStatisticsOutput[]>(`/estatistica/atleta/geral?idLiga=${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;      
+    }
+  }
+
   return {
     fetchLibero,
     fetchCentral,
     fetchOposto,
     fetchGalera,
+    fetchGeneralStatistics,
   }
 }

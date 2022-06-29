@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import useLeague from "../../leagues/hooks/useLeague";
 import { StatisticsService } from "../services/statisticsService"
-import { StatisticsOutput } from "../types";
+import { GeneralStatisticsOutput, StatisticsOutput } from "../types";
 
 export function useStatistics() {
   const toast = useToast();
   const [currentLeagueId, setCurrentLeagueId] = useState<string | undefined>(undefined);
-  const {fetchGalera, fetchCentral, fetchOposto, fetchLibero } = StatisticsService();
+  const {fetchGalera, fetchCentral, fetchOposto, fetchLibero, fetchGeneralStatistics } = StatisticsService();
   
 
   const toastError = (message?: string) => {
@@ -57,6 +57,14 @@ export function useStatistics() {
     },
   })
 
+  const {
+    data: generalStatistics,
+    isLoading: isLoadingGeneralStatistics,
+    error: generalStatisticsError,
+  } = useQuery<GeneralStatisticsOutput[]>(["fetchGeneralStatistics", currentLeagueId], () => fetchGeneralStatistics(currentLeagueId), {
+    onError: () => toastError(),
+  })
+
   return {
     setCurrentLeagueId,
     
@@ -75,5 +83,9 @@ export function useStatistics() {
     libero,
     isLoadingLibero,
     liberoError,
+
+    generalStatistics,
+    isLoadingGeneralStatistics,
+    generalStatisticsError,
   }
 }
