@@ -6,6 +6,12 @@ import parseResponseData from "../../../utils/parsers";
 
 function useRegisterStatistics() {
   const [leagueId, setLeagueId] = useState<string>();
+  const [round, setRound] = useState<number | string>();
+
+  const { data: leagues, isLoading: isLoadingLeagues } = useQuery(
+    "leagues",
+    () => api.get("/liga").then(parseResponseData)
+  );
 
   const { data: league, isLoading: isLoadingLeague } = useQuery<League>(
     ["league", { id: leagueId }],
@@ -16,16 +22,27 @@ function useRegisterStatistics() {
   );
 
   const { data: matches, isLoading: isLoadingMatches } = useQuery(
-    ["matches", { leagueId: leagueId }],
-    () => api.get("/partida", { params: { idLiga: leagueId } }),
+    ["matches", { leagueId, round }],
+    () =>
+      api
+        .get("/partida", { params: { idLiga: leagueId, tipoRodada: round } })
+        .then(parseResponseData),
     {
       onSuccess: (d) => console.log(d),
-
-      enabled: !!leagueId && !!league,
+      enabled: !!leagueId && !!league && !!round,
     }
   );
 
-  return { leagueId, setLeagueId, league, isLoadingLeague };
+  return {
+    leagueId,
+    setLeagueId,
+    round,
+    setRound,
+    leagues,
+    isLoadingLeagues,
+    league,
+    isLoadingLeague,
+  };
 }
 
 export { useRegisterStatistics };
