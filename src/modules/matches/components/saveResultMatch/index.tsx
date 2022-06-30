@@ -25,11 +25,16 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 
+export interface ResultMatchProps {
+  mandante: number[];
+  visitante: number[];
+}
 interface Props {
   isOpen: boolean;
   onClose(): void;
-  onFinish(): void;
+  onFinish(data: ResultMatchProps): void;
 
   mandante: string;
   visitante: string;
@@ -48,21 +53,28 @@ export default function SaveResultMatch({
 }: Props) {
   const toast = useToast();
 
-  const [mandanteResult, setMandanteResult] = useState<number>(0);
-  const [visitanteResult, setVisitanteResult] = useState<number>(0);
+  const [totalSets, setTotalSets] = useState<number>(0);
+  const [mandanteSets, setMandanteSets] = useState<number[]>([]);
+  const [visitanteSets, setVisitanteSets] = useState<number[]>([]);
 
-  const totalSet = useMemo(
-    () => mandanteResult + visitanteResult,
-    [mandanteResult, visitanteResult]
-  );
+  const onChangeMandanteSets = (value: string, set: number) => {
+    if (value <= "0") {
+      toastError("Insira o valor do set Válido");
+      return;
+    }
 
-  const someSet = (mandante?: string, visitante?: string) => {
-    setMandanteResult(
-      mandante != null ? Number.parseInt(mandante) : mandanteResult
-    );
-    setVisitanteResult(
-      visitante != null ? Number.parseInt(visitante) : visitanteResult
-    );
+    mandanteSets[set] = parseInt(value);
+    setMandanteSets(mandanteSets);
+  };
+
+  const onChangeVisitanteSets = (value: string, set: number) => {
+    if (value <= "0") {
+      toastError("Insira o valor do set Válido");
+      return;
+    }
+
+    visitanteSets[set] = parseInt(value);
+    setVisitanteSets(visitanteSets);
   };
 
   const toastError = (message?: string) => {
@@ -76,66 +88,70 @@ export default function SaveResultMatch({
     });
   };
 
-  const renderPlayersClub = () => {
-    return (
-      <Grid
-        gridTemplateColumns="repeat(2,1fr)"
-        justifyContent="center"
-        gap="60px"
-      >
-        <Box>
-          <FormControl>
-            <FormLabel marginTop="12px">Mandante: {mandante}</FormLabel>
-            <Select
-              placeholder="Mandante:"
-              onChange={(select) => someSet(select.target.value, null)}
-            >
-              <option value={0}>0</option>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              {visitanteResult !== 3 && <option value={3}>3</option>}
-            </Select>
-          </FormControl>
-          {renderPlayerByPosition()}
-        </Box>
-        <Box>
-          <FormControl>
-            <FormLabel marginTop="12px">Visitante: {visitante}</FormLabel>
-            <Select
-              placeholder="Visitante"
-              onChange={(select) => someSet(null, select.target.value)}
-            >
-              <option value={0}>0</option>
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              {mandanteResult !== 3 && <option value={3}>3</option>}
-            </Select>
-          </FormControl>
-          {renderPlayerByPosition()}
-        </Box>
-      </Grid>
-    );
+  const checkSets = () => {
+    const error =
+      visitanteSets.includes(NaN) ||
+      mandanteSets.includes(NaN) ||
+      visitanteSets.length < totalSets ||
+      mandanteSets.length < totalSets;
+
+    if (error) {
+      toastError("Preencha todos os sets da partida");
+      return;
+    }
+
+    onFinish({ visitante: visitanteSets, mandante: mandanteSets });
   };
 
-  const renderPlayerByPosition = () => {
+  const renderPlayersClub = () => {
     return (
-      <Grid gridTemplateColumns={`repeat(${totalSet}, 1fr)`} gap="20px">
-        {Array.from<Number>(new Array(totalSet)).map((_, index) => (
-          <FormControl marginTop="24px">
-            <FormLabel>{index + 1} SET</FormLabel>
-            <Input
-              placeholder=""
-              type="number"
-              // {...register("nome", { required: true })}
-            />
-            {/* {errors.nome && (
-               <Text color="red" fontSize="10">
-                 Insira o nome
-               </Text>
-             )} */}
-          </FormControl>
-        ))}
-      </Grid>
+      <Box>
+        <FormControl>
+          <FormLabel marginTop="12px">Total de sets da partida:</FormLabel>
+          <Select
+            placeholder="Total de sets:"
+            onChange={(select) => setTotalSets(parseInt(select.target.value))}
+          >
+            <option value={3}>3</option>
+            <option value={4}>4</option>
+            <option value={5}>5</option>
+          </Select>
+        </FormControl>
+        {totalSets > 0 && (
+          <>
+            <FormLabel marginTop="12px">Mandante:</FormLabel>
+            <Grid gridTemplateColumns={`repeat(${totalSets}, 1fr)`} gap="20px">
+              {Array.from<Number>(new Array(totalSets)).map((_, index) => (
+                <FormControl marginTop="12x">
+                  <FormLabel>{index + 1} SET</FormLabel>
+                  <Input
+                    placeholder=""
+                    type="number"
+                    onChange={(e) =>
+                      onChangeMandanteSets(e.target.value, index)
+                    }
+                  />
+                </FormControl>
+              ))}
+            </Grid>
+            <FormLabel marginTop="12px">Visitante:</FormLabel>
+            <Grid gridTemplateColumns={`repeat(${totalSets}, 1fr)`} gap="20px">
+              {Array.from<Number>(new Array(totalSets)).map((_, index) => (
+                <FormControl marginTop="12x">
+                  <FormLabel>{index + 1} SET</FormLabel>
+                  <Input
+                    placeholder=""
+                    type="number"
+                    onChange={(e) =>
+                      onChangeVisitanteSets(e.target.value, index)
+                    }
+                  />
+                </FormControl>
+              ))}
+            </Grid>
+          </>
+        )}
+      </Box>
     );
   };
 
@@ -162,9 +178,11 @@ export default function SaveResultMatch({
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={() => onFinish()}>
-            Finalizar
-          </Button>
+          {totalSets > 0 && (
+            <Button colorScheme="blue" mr={3} onClick={checkSets}>
+              Finalizar
+            </Button>
+          )}
           <Button variant="ghost" onClick={onClose}>
             Fechar
           </Button>

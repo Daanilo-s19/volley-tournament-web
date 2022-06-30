@@ -105,3 +105,9 @@ export interface RegisterMatchInput {
   atletasVisitante: player[];
   desistente: WoType;
 }
+
+export interface MatchResultInput {
+  idMatch: string;
+  setsMandante: number[];
+  setsVisitante: number[];
+}

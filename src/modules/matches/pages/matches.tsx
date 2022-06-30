@@ -96,6 +96,9 @@ export function MatchesPage() {
     isLoadingHomePlayers,
     isLoadingVisitingPlayers,
     onFinishRegisterMatch,
+
+    onFinishRegisterResult,
+    isLoadingRegisteResult,
   } = useMatches();
 
   const renderModal = () => {
@@ -328,8 +331,8 @@ export function MatchesPage() {
         <SaveResultMatch
           mandante={match.mandante.equipe.nome}
           visitante={match.visitante.equipe.nome}
-          loading={false}
-          onFinish={() => {}}
+          loading={isLoadingRegisteResult}
+          onFinish={(data) => onFinishRegisterResult(data)}
           isOpen={isOpenSaveResult}
           onClose={onCloseSaveResult}
         />
