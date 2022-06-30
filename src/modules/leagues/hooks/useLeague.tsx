@@ -80,7 +80,6 @@ export default function useLeague(onStart: boolean = true) {
 
   const {
     data: classification,
-    refetch: onFetchClassification,
     isLoading: isLoadingClassification,
     error: classificationError,
   } = useQuery<LeagueClassificationOutput[]>(
@@ -115,7 +114,6 @@ export default function useLeague(onStart: boolean = true) {
     onSubmit,
 
     classification,
-    onFetchClassification,
     isLoadingClassification,
     classificationError,
 

@@ -1,30 +1,22 @@
-import React from "react";
-import { AddIcon, DeleteIcon, CheckCircleIcon } from "@chakra-ui/icons";
+import React, { useEffect } from "react";
 import {
   Box,
   Heading,
-  Text,
-  IconButton,
   Flex,
-  Tooltip,
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  Divider,
+
 } from "@chakra-ui/react";
 import SelectLeague from "../../leagues/components/selectLeague";
 import useLeague from "../hooks/useLeague";
 import LeagueClassificationTable from "../components/leaguesTable";
-import { LeagueOutput } from "../types/leagueType";
 
 export function LeaguePage() {
-  const {classification,classificationError, isLoadingClassification, onFetchClassification } = useLeague()
+  const {classification,classificationError, isLoadingClassification, setLeagueID } = useLeague()
 
   return (
     <Box>
-      <SelectLeague onChange={(e) => {}} />
+      <SelectLeague onChange={(e) => {
+        setLeagueID(e)
+      }} />
       <Flex
         flexDirection="column"
         alignContent="center"
