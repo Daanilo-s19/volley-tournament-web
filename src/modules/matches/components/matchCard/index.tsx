@@ -28,10 +28,10 @@ export default function MatchCard({
 }: Props) {
   const getBorderByType = () =>
     ({
-      agendada: "orange",
-      participantes_cadastrados: "green",
+      agendada: "grey",
+      participantes_cadastrados: "orange",
       wo: "red",
-      concluida: "grey",
+      concluida: "green",
     }[status]);
 
   return (

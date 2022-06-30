@@ -192,7 +192,7 @@ export default function useOverview() {
     }
     const input: InitLeagueInput = {
       diasDaSemana: checkDayofWeek,
-      horarios: hoursGame.map((e) => convertH2M(e)),
+      horarios: hoursGame,
       data: data.startAt,
       intervaloDeDiasUteisEntreTurnos: 5,
     };

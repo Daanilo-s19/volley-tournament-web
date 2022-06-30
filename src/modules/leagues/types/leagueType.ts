@@ -30,7 +30,7 @@ export type InitilizeType =
 export interface InitLeagueInput {
   data: string;
   diasDaSemana: DayType[];
-  horarios: number[];
+  horarios: string[];
   intervaloDeDiasUteisEntreTurnos: number;
 }
 
