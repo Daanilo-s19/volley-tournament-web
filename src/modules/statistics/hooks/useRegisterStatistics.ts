@@ -54,7 +54,7 @@ function useRegisterStatistics() {
   }, [matchId]);
 
   const { data: homeTeam, isLoading: isLoadingHomeTeam } = useQuery<Team>(
-    ["team", { leagueId, teamId: match?.mandante.idEquipe }],
+    ["team", { leagueId, teamId: match?.mandante.idEquipe, matchId: matchId }],
     () =>
       api.get(`/equipe/${match?.mandante.idEquipe}`).then(parseResponseData),
     {
@@ -64,7 +64,10 @@ function useRegisterStatistics() {
   );
 
   const { data: awayTeam, isLoading: isLoadingAwayTeam } = useQuery<Team>(
-    ["team", { leagueId, teamId: match?.visitante?.idEquipe }],
+    [
+      "team",
+      { leagueId, teamId: match?.visitante?.idEquipe, matchId: matchId },
+    ],
     () =>
       api.get(`/equipe/${match?.visitante.idEquipe}`).then(parseResponseData),
     {
@@ -85,7 +88,7 @@ function useRegisterStatistics() {
       (playerStats: RegisterStatisticsForm) =>
         api.post("/estatistica/atleta", {
           idPartida: matchId,
-          idAtletaPartida: "",
+          idAtleta: playerId,
           bloqueios: playerStats.bloqueios,
           recepcoes: playerStats.recepcoes,
           aces: playerStats.aces,
