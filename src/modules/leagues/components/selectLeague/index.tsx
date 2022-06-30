@@ -136,7 +136,7 @@ export default function SelectLeague({ onChange }: Props) {
         <IconButton
           colorScheme="blue"
           aria-label="Adicionar Liga"
-          margin="8px 8px 0px 0px"
+          margin="8px"
           icon={<AddIcon />}
           onClick={() => {
             reset();

@@ -3,6 +3,14 @@ import { Gender } from "../person";
 import { Assistant } from "../person/assistant";
 import { Coach } from "../person/coach";
 
+interface SimplifiedTeam {
+  id: string;
+  nome: string;
+  idLiga: string;
+  idGinasio: string;
+  quantidadeAtletas: number;
+}
+
 interface Team {
   id: string;
   nome: string;
@@ -32,4 +40,4 @@ interface Team {
   auxiliares: Assistant[];
 }
 
-export type { Team };
+export type { Team, SimplifiedTeam };
