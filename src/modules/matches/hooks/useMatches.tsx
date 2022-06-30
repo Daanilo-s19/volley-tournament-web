@@ -6,9 +6,11 @@ import useLeague from "../../leagues/hooks/useLeague";
 import PlayerService from "../../overview/services/playerService";
 import { PlayerOutput } from "../../overview/types";
 import { DataSelect } from "../components/createMatch";
+import { ResultMatchProps } from "../components/saveResultMatch";
 import MatchesService from "../services/matchesServices";
 import {
   MatchOutput,
+  MatchResultInput,
   Person,
   PersonOutput,
   player,
@@ -31,6 +33,7 @@ export default function useMatches() {
     fetchDelegate,
     fetchMatchPerRound,
     registerMatchParticipants,
+    registerMatchResult,
   } = MatchesService();
 
   const { fetchPlayers } = PlayerService();
@@ -42,13 +45,18 @@ export default function useMatches() {
     onClose: onCloseCreateMatch,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenSaveResult,
+    onOpen: onOpenSaveResult,
+    onClose: onCloseSaveResult,
+  } = useDisclosure();
+
   const [match, setMatch] = useState<MatchOutput>();
 
   const [leagueID, setLeagueID] = useState<string>();
   const [delegates, setDelegates] = useState<PersonOutput[]>();
   const [referees, setreferees] = useState<PersonOutput[]>();
-  const [currentRegisterMatch, setCurrentRegisterMatch] =
-    useState<RegisterMatchInput>();
+
   const [round, setRound] = useState<number | string>(1);
 
   const {
@@ -87,10 +95,15 @@ export default function useMatches() {
 
   const openMatch = (value: MatchOutput) => {
     setMatch(value);
-    onOpenCreateMatch();
-
-    refetchHomePlayers();
-    refetchVisitingPlayers();
+    if (value.status === "agendada") {
+      onOpenCreateMatch();
+      refetchHomePlayers();
+      refetchVisitingPlayers();
+      return;
+    }
+    if (value.status === "participantes_cadastrados") {
+      onOpenSaveResult();
+    }
   };
 
   const onFinishRegisterMatch = (
@@ -140,6 +153,15 @@ export default function useMatches() {
     registerMatchMutate(input);
   };
 
+  const onFinishRegisterResult = (data: ResultMatchProps) => {
+    const input: MatchResultInput = {
+      idMatch: match.id,
+      setsMandante: data.mandante,
+      setsVisitante: data.visitante,
+    };
+    registeResultMutate(input);
+  };
+
   const {
     data: dataHomePlayers,
     refetch: refetchHomePlayers,
@@ -163,6 +185,19 @@ export default function useMatches() {
         onCloseCreateMatch();
       },
       onError: (d: any) => toastError(d.response.data.message),
+    });
+
+  const { mutate: registeResultMutate, isLoading: isLoadingRegisteResult } =
+    useMutation(registerMatchResult, {
+      onSuccess: (d) => {
+        toastSuccess();
+        refetchMatchRound();
+        onCloseSaveResult();
+      },
+      onError: (d: any) => {
+        toastError(d.response.data.message);
+        onCloseSaveResult();
+      },
     });
 
   const {
@@ -300,6 +335,10 @@ export default function useMatches() {
     onOpenCreateMatch,
     onCloseCreateMatch,
 
+    isOpenSaveResult,
+    onOpenSaveResult,
+    onCloseSaveResult,
+
     dataMatches,
 
     openMatch,
@@ -310,5 +349,8 @@ export default function useMatches() {
     isLoadingHomePlayers,
     isLoadingVisitingPlayers,
     onFinishRegisterMatch,
+
+    onFinishRegisterResult,
+    isLoadingRegisteResult,
   };
 }

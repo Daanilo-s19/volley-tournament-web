@@ -4,6 +4,7 @@ import {
   Person,
   MatchOutput,
   RegisterMatchInput,
+  MatchResultInput,
 } from "../types";
 export default function MatchesService() {
   const fetchReferee = async (id: string) => {
@@ -78,6 +79,21 @@ export default function MatchesService() {
     }
   };
 
+  const registerMatchResult = async (input: MatchResultInput): Promise<any> => {
+    try {
+      const response = await ApiService.post(
+        `/partida/${input.idMatch}/cadastra-resultado`,
+        {
+          setsMandante: input.setsMandante,
+          setsVisitante: input.setsVisitante,
+        }
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return {
     fetchReferee,
     fetchDelegate,
@@ -86,5 +102,6 @@ export default function MatchesService() {
 
     fetchMatchPerRound,
     registerMatchParticipants,
+    registerMatchResult,
   };
 }
