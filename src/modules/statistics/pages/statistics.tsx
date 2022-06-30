@@ -20,8 +20,6 @@ import Link from "next/link";
 
 export function StatisticsPage() {
   const {
-    galera,
-    isLoadingGalera,
     setCurrentLeagueId,
     central,
     isLoadingCentral,
@@ -32,7 +30,6 @@ export function StatisticsPage() {
     liberoError,
     opostoError,
     centralError,
-    galeraError,
     generalStatistics,
     generalStatisticsError,
     isLoadingGeneralStatistics,
@@ -45,7 +42,6 @@ export function StatisticsPage() {
           <Tab>Libero</Tab>
           <Tab>Oposto</Tab>
           <Tab>Central</Tab>
-          <Tab>Craque da galera</Tab>
         </TabList>
 
         <TabPanels>
@@ -68,13 +64,6 @@ export function StatisticsPage() {
               error={!!centralError}
               items={central}
               loading={isLoadingCentral}
-            />
-          </TabPanel>
-          <TabPanel>
-            <StatisticsTable
-              error={!!galeraError}
-              items={galera}
-              loading={isLoadingGalera}
             />
           </TabPanel>
         </TabPanels>
@@ -136,21 +125,6 @@ export function StatisticsPage() {
                   votes: central[0].quantidadeVotos,
                   age: central[0].atleta.idade,
                   team: central[0].equipe.nome,
-                }
-              : undefined
-          }
-        />
-
-        <GenericPlayerCard
-          title="Craque da galera"
-          loading={isLoadingGalera}
-          player={
-            galera?.length
-              ? {
-                  name: galera[0].atleta.nome,
-                  votes: galera[0].quantidadeVotos,
-                  age: galera[0].atleta.idade,
-                  team: galera[0].equipe.nome,
                 }
               : undefined
           }
