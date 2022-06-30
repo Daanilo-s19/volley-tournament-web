@@ -1,7 +1,7 @@
 import { Box } from "@chakra-ui/react";
 
-function CreateStatistics() {
+function RegisterStatistics() {
   return <Box>oi</Box>;
 }
 
-export { CreateStatistics };
+export { RegisterStatistics };

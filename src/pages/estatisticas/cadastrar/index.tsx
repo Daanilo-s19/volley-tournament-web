@@ -1,1 +1,1 @@
-export { CreateStatistics as default } from "../../../modules/statistics/pages/create";
+export { RegisterStatistics as default } from "../../../modules/statistics/pages/register";
