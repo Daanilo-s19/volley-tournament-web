@@ -1,7 +1,15 @@
 import { Box } from "@chakra-ui/react";
+import SelectLeague from "../../leagues/components/selectLeague";
+import { useRegisterStatistics } from "../hooks/useRegisterStatistics";
 
 function RegisterStatistics() {
-  return <Box>oi</Box>;
+  const { setLeagueId } = useRegisterStatistics();
+
+  return (
+    <Box>
+      <SelectLeague onChange={setLeagueId} />
+    </Box>
+  );
 }
 
 export { RegisterStatistics };
