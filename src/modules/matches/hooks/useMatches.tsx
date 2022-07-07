@@ -352,5 +352,8 @@ export default function useMatches() {
 
     onFinishRegisterResult,
     isLoadingRegisteResult,
+
+    isLoadingRegisterMatch,
+    isLoadingMatchRound,
   };
 }

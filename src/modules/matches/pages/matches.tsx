@@ -36,6 +36,7 @@ import {
   Select,
   Grid,
   Spacer,
+  CircularProgress,
 } from "@chakra-ui/react";
 import MatchesTables from "../components/matchesTable";
 import PersonTable from "../components/personTable";
@@ -100,6 +101,8 @@ export function MatchesPage() {
 
     onFinishRegisterResult,
     isLoadingRegisteResult,
+
+    isLoadingMatchRound,
   } = useMatches();
 
   const renderModal = () => {
@@ -257,22 +260,28 @@ export function MatchesPage() {
           </Text>
         </Flex>
       </Box>
-      <Grid gridTemplateColumns="1fr 1fr" gridAutoRows="1fr" gridGap="32px">
-        {(dataMatches ?? []).map((e) => (
-          <MatchCard
-            key={e.id}
-            mandante={e.mandante.equipe.nome}
-            visistante={e.visitante.equipe.nome}
-            mandantePts={e.mandante.pontuacao}
-            visitantePts={e.visitante.pontuacao}
-            horario={e.dataAtualizacao}
-            mandantePtsSet={e.mandante.pontosNosSets}
-            visitantePtsSet={e.visitante.pontosNosSets}
-            status={e.status}
-            onClick={() => openMatch(e)}
-          />
-        ))}
-      </Grid>
+      {isLoadingMatchRound ? (
+        <Flex pt="4" justifyContent="center">
+          <CircularProgress isIndeterminate />
+        </Flex>
+      ) : (
+        <Grid gridTemplateColumns="1fr 1fr" gridAutoRows="1fr" gridGap="32px">
+          {(dataMatches ?? []).map((e) => (
+            <MatchCard
+              key={e.id}
+              mandante={e.mandante.equipe.nome}
+              visistante={e.visitante.equipe.nome}
+              mandantePts={e.mandante.pontuacao}
+              visitantePts={e.visitante.pontuacao}
+              horario={e.dataComeco}
+              mandantePtsSet={e.mandante.pontosNosSets}
+              visitantePtsSet={e.visitante.pontosNosSets}
+              status={e.status}
+              onClick={() => openMatch(e)}
+            />
+          ))}
+        </Grid>
+      )}
       <Flex
         flexDirection="row"
         alignContent="center"

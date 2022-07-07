@@ -34,6 +34,22 @@ export default function MatchCard({
       concluida: "green",
     }[status]);
 
+  const getLabelStatus = () =>
+    ({
+      agendada: "Agendada",
+      participantes_cadastrados: " Participantes cadastrados",
+      wo: "WO",
+      concluida: "concluída",
+    }[status]);
+
+  const getLabelState = () =>
+    ({
+      agendada: "Agendado para:",
+      participantes_cadastrados: "Agendadado para:",
+      wo: "Disputado em:",
+      concluida: "Disputado em:",
+    }[status]);
+
   return (
     <Box
       onClick={onClick}
@@ -73,10 +89,11 @@ export default function MatchCard({
         </Box>
       </Flex>
       <Flex marginTop="16px">
+        {getLabelStatus()}
         <Spacer />
         <Text fontSize="medium">
-          Atualizado em:{" "}
-          {dayjs(horario).locale("pt").format("dddd. DD/MM/YYYY")}
+          {getLabelState()}{" "}
+          {dayjs(horario).locale("pt-BR").format("DD/MM/YYYY")}
         </Text>
       </Flex>
     </Box>
